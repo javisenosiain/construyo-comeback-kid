@@ -79,6 +79,66 @@ export type Database = {
           },
         ]
       }
+      business_settings: {
+        Row: {
+          automation_settings: Json | null
+          business_name: string | null
+          business_type: string | null
+          created_at: string
+          default_currency: string | null
+          facebook_connected: boolean | null
+          id: string
+          instagram_connected: boolean | null
+          insurance_number: string | null
+          license_number: string | null
+          notification_preferences: Json | null
+          service_areas: string[] | null
+          specialties: string[] | null
+          stripe_account_id: string | null
+          updated_at: string
+          user_id: string | null
+          whatsapp_number: string | null
+        }
+        Insert: {
+          automation_settings?: Json | null
+          business_name?: string | null
+          business_type?: string | null
+          created_at?: string
+          default_currency?: string | null
+          facebook_connected?: boolean | null
+          id?: string
+          instagram_connected?: boolean | null
+          insurance_number?: string | null
+          license_number?: string | null
+          notification_preferences?: Json | null
+          service_areas?: string[] | null
+          specialties?: string[] | null
+          stripe_account_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+          whatsapp_number?: string | null
+        }
+        Update: {
+          automation_settings?: Json | null
+          business_name?: string | null
+          business_type?: string | null
+          created_at?: string
+          default_currency?: string | null
+          facebook_connected?: boolean | null
+          id?: string
+          instagram_connected?: boolean | null
+          insurance_number?: string | null
+          license_number?: string | null
+          notification_preferences?: Json | null
+          service_areas?: string[] | null
+          specialties?: string[] | null
+          stripe_account_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+          whatsapp_number?: string | null
+        }
+        Relationships: []
+      }
       companies: {
         Row: {
           created_at: string | null
@@ -113,6 +173,146 @@ export type Database = {
             columns: ["owner_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      construyo_invoices: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string | null
+          customer_email: string | null
+          customer_name: string
+          due_date: string | null
+          id: string
+          invoice_number: string
+          lead_id: string | null
+          notes: string | null
+          paid_date: string | null
+          project_title: string
+          sent_date: string | null
+          status: string | null
+          stripe_payment_intent_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string | null
+          customer_email?: string | null
+          customer_name: string
+          due_date?: string | null
+          id?: string
+          invoice_number: string
+          lead_id?: string | null
+          notes?: string | null
+          paid_date?: string | null
+          project_title: string
+          sent_date?: string | null
+          status?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string | null
+          customer_email?: string | null
+          customer_name?: string
+          due_date?: string | null
+          id?: string
+          invoice_number?: string
+          lead_id?: string | null
+          notes?: string | null
+          paid_date?: string | null
+          project_title?: string
+          sent_date?: string | null
+          status?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "construyo_invoices_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      construyo_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          customer_email: string | null
+          customer_name: string
+          id: string
+          invoice_id: string | null
+          lead_id: string | null
+          platform: string | null
+          published_date: string | null
+          rating: number | null
+          received_date: string | null
+          request_token: string | null
+          requested_date: string | null
+          status: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name: string
+          id?: string
+          invoice_id?: string | null
+          lead_id?: string | null
+          platform?: string | null
+          published_date?: string | null
+          rating?: number | null
+          received_date?: string | null
+          request_token?: string | null
+          requested_date?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string
+          id?: string
+          invoice_id?: string | null
+          lead_id?: string | null
+          platform?: string | null
+          published_date?: string | null
+          rating?: number | null
+          received_date?: string | null
+          request_token?: string | null
+          requested_date?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "construyo_reviews_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "construyo_invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "construyo_reviews_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
             referencedColumns: ["id"]
           },
         ]
@@ -992,6 +1192,65 @@ export type Database = {
           },
         ]
       }
+      social_posts: {
+        Row: {
+          content: string | null
+          created_at: string
+          engagement_stats: Json | null
+          id: string
+          lead_id: string | null
+          media_urls: string[] | null
+          platform: string
+          platform_post_id: string | null
+          post_type: string
+          posted_at: string | null
+          scheduled_for: string | null
+          status: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          engagement_stats?: Json | null
+          id?: string
+          lead_id?: string | null
+          media_urls?: string[] | null
+          platform: string
+          platform_post_id?: string | null
+          post_type: string
+          posted_at?: string | null
+          scheduled_for?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          engagement_stats?: Json | null
+          id?: string
+          lead_id?: string | null
+          media_urls?: string[] | null
+          platform?: string
+          platform_post_id?: string | null
+          post_type?: string
+          posted_at?: string | null
+          scheduled_for?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_posts_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           created_at: string | null
@@ -1024,6 +1283,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_invoice_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
