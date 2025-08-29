@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Leads from "./pages/Leads";
+import PlanningData from "./pages/PlanningData";
 import Invoices from "./pages/Invoices";
 import Payments from "./pages/Payments";
 import Reviews from "./pages/Reviews";
@@ -42,6 +43,11 @@ const AppContent = () => {
         <Route path="/leads" element={
           <ProtectedRoute>
             <Leads />
+          </ProtectedRoute>
+        } />
+        <Route path="/planning-data" element={
+          <ProtectedRoute>
+            <PlanningData />
           </ProtectedRoute>
         } />
         <Route path="/invoices" element={

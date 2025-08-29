@@ -1123,6 +1123,33 @@ export type Database = {
           },
         ]
       }
+      planning_api_cache: {
+        Row: {
+          cache_key: string
+          created_at: string
+          data: Json
+          id: string
+          query: string
+          timestamp: string
+        }
+        Insert: {
+          cache_key: string
+          created_at?: string
+          data: Json
+          id?: string
+          query: string
+          timestamp?: string
+        }
+        Update: {
+          cache_key?: string
+          created_at?: string
+          data?: Json
+          id?: string
+          query?: string
+          timestamp?: string
+        }
+        Relationships: []
+      }
       portfolio_items: {
         Row: {
           budget_range: string | null
@@ -1630,6 +1657,10 @@ export type Database = {
       check_auth_rate_limit: {
         Args: { p_email?: string; p_ip_address: unknown }
         Returns: boolean
+      }
+      cleanup_planning_cache: {
+        Args: Record<PropertyKey, never>
+        Returns: number
       }
       encrypt_sensitive_data: {
         Args: { data: string }
