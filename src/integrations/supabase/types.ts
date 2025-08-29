@@ -104,6 +104,42 @@ export type Database = {
         }
         Relationships: []
       }
+      automation_rules: {
+        Row: {
+          actions: Json | null
+          conditions: Json | null
+          created_at: string
+          id: string
+          is_active: boolean | null
+          rule_name: string
+          trigger_type: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          actions?: Json | null
+          conditions?: Json | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          rule_name: string
+          trigger_type: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          actions?: Json | null
+          conditions?: Json | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          rule_name?: string
+          trigger_type?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       builders: {
         Row: {
           bio: string | null
@@ -379,6 +415,66 @@ export type Database = {
           },
           {
             foreignKeyName: "construyo_reviews_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_interactions: {
+        Row: {
+          automation_rule_id: string | null
+          content: string | null
+          created_at: string
+          id: string
+          interaction_type: string
+          lead_id: string | null
+          metadata: Json | null
+          opened_at: string | null
+          responded_at: string | null
+          sent_at: string | null
+          subject: string | null
+          user_id: string | null
+        }
+        Insert: {
+          automation_rule_id?: string | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          interaction_type: string
+          lead_id?: string | null
+          metadata?: Json | null
+          opened_at?: string | null
+          responded_at?: string | null
+          sent_at?: string | null
+          subject?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          automation_rule_id?: string | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          interaction_type?: string
+          lead_id?: string | null
+          metadata?: Json | null
+          opened_at?: string | null
+          responded_at?: string | null
+          sent_at?: string | null
+          subject?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_interactions_automation_rule_id_fkey"
+            columns: ["automation_rule_id"]
+            isOneToOne: false
+            referencedRelation: "automation_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_interactions_lead_id_fkey"
             columns: ["lead_id"]
             isOneToOne: false
             referencedRelation: "leads"
@@ -797,33 +893,114 @@ export type Database = {
           },
         ]
       }
+      lead_capture_forms: {
+        Row: {
+          created_at: string
+          embed_code: string | null
+          fields: Json | null
+          form_description: string | null
+          form_name: string
+          form_title: string | null
+          id: string
+          is_active: boolean | null
+          redirect_url: string | null
+          thank_you_message: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          embed_code?: string | null
+          fields?: Json | null
+          form_description?: string | null
+          form_name: string
+          form_title?: string | null
+          id?: string
+          is_active?: boolean | null
+          redirect_url?: string | null
+          thank_you_message?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          embed_code?: string | null
+          fields?: Json | null
+          form_description?: string | null
+          form_name?: string
+          form_title?: string | null
+          id?: string
+          is_active?: boolean | null
+          redirect_url?: string | null
+          thank_you_message?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
+          address: string | null
+          budget_range: string | null
           builder_id: string | null
           created_at: string | null
           customer_id: string | null
+          customer_name: string | null
           description: string | null
+          email: string | null
+          form_id: string | null
           id: string
+          notes: string | null
+          phone: string | null
+          priority: string | null
+          project_type: string | null
+          referral_code_id: string | null
           source: string | null
           status: string | null
+          timeline: string | null
+          updated_at: string | null
         }
         Insert: {
+          address?: string | null
+          budget_range?: string | null
           builder_id?: string | null
           created_at?: string | null
           customer_id?: string | null
+          customer_name?: string | null
           description?: string | null
+          email?: string | null
+          form_id?: string | null
           id?: string
+          notes?: string | null
+          phone?: string | null
+          priority?: string | null
+          project_type?: string | null
+          referral_code_id?: string | null
           source?: string | null
           status?: string | null
+          timeline?: string | null
+          updated_at?: string | null
         }
         Update: {
+          address?: string | null
+          budget_range?: string | null
           builder_id?: string | null
           created_at?: string | null
           customer_id?: string | null
+          customer_name?: string | null
           description?: string | null
+          email?: string | null
+          form_id?: string | null
           id?: string
+          notes?: string | null
+          phone?: string | null
+          priority?: string | null
+          project_type?: string | null
+          referral_code_id?: string | null
           source?: string | null
           status?: string | null
+          timeline?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -838,6 +1015,20 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_form_id_fkey"
+            columns: ["form_id"]
+            isOneToOne: false
+            referencedRelation: "lead_capture_forms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_referral_code_id_fkey"
+            columns: ["referral_code_id"]
+            isOneToOne: false
+            referencedRelation: "referral_codes"
             referencedColumns: ["id"]
           },
         ]
@@ -1133,6 +1324,90 @@ export type Database = {
           },
         ]
       }
+      referral_clicks: {
+        Row: {
+          clicked_at: string
+          converted: boolean | null
+          id: string
+          ip_address: unknown | null
+          lead_id: string | null
+          referral_code_id: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          clicked_at?: string
+          converted?: boolean | null
+          id?: string
+          ip_address?: unknown | null
+          lead_id?: string | null
+          referral_code_id?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          clicked_at?: string
+          converted?: boolean | null
+          id?: string
+          ip_address?: unknown | null
+          lead_id?: string | null
+          referral_code_id?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_clicks_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referral_clicks_referral_code_id_fkey"
+            columns: ["referral_code_id"]
+            isOneToOne: false
+            referencedRelation: "referral_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      referral_codes: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          is_active: boolean | null
+          referral_message: string | null
+          total_clicks: number | null
+          total_conversions: number | null
+          updated_at: string
+          user_id: string | null
+          whatsapp_template: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          referral_message?: string | null
+          total_clicks?: number | null
+          total_conversions?: number | null
+          updated_at?: string
+          user_id?: string | null
+          whatsapp_template?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          referral_message?: string | null
+          total_clicks?: number | null
+          total_conversions?: number | null
+          updated_at?: string
+          user_id?: string | null
+          whatsapp_template?: string | null
+        }
+        Relationships: []
+      }
       referrals: {
         Row: {
           created_at: string | null
@@ -1361,6 +1636,10 @@ export type Database = {
         Returns: string
       }
       generate_invoice_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_referral_code: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
