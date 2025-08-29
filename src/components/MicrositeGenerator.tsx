@@ -42,7 +42,13 @@ export const MicrositeGenerator = () => {
     formId: '',
     zapierWebhook: '',
     primaryColor: '#2563eb',
-    description: ''
+    description: '',
+    calendlyUrl: '',
+    showPortfolio: false,
+    portfolioMaxItems: 9,
+    portfolioShowReviews: true,
+    googleReviewUrl: '',
+    trustpilotReviewUrl: ''
   });
   const { toast } = useToast();
 
@@ -117,7 +123,15 @@ export const MicrositeGenerator = () => {
             styling: {
               primaryColor: formData.primaryColor
             },
-            description: formData.description
+            description: formData.description,
+            calendlyUrl: formData.calendlyUrl || null,
+            showPortfolio: formData.showPortfolio,
+            portfolioSettings: {
+              maxItems: formData.portfolioMaxItems,
+              showReviews: formData.portfolioShowReviews,
+              googleReviewUrl: formData.googleReviewUrl || null,
+              trustpilotReviewUrl: formData.trustpilotReviewUrl || null
+            }
           }
         }
       });
@@ -140,7 +154,13 @@ export const MicrositeGenerator = () => {
         formId: '',
         zapierWebhook: '',
         primaryColor: '#2563eb',
-        description: ''
+        description: '',
+        calendlyUrl: '',
+        showPortfolio: false,
+        portfolioMaxItems: 9,
+        portfolioShowReviews: true,
+        googleReviewUrl: '',
+        trustpilotReviewUrl: ''
       });
 
       fetchMicrosites();
@@ -192,7 +212,13 @@ export const MicrositeGenerator = () => {
       formId: forms[0]?.id || '',
       zapierWebhook: 'https://hooks.zapier.com/hooks/catch/example/webhook',
       primaryColor: '#059669',
-      description: 'Professional construction services with 15+ years of experience'
+      description: 'Professional construction services with 15+ years of experience',
+      calendlyUrl: 'https://calendly.com/client789/consultation',
+      showPortfolio: true,
+      portfolioMaxItems: 6,
+      portfolioShowReviews: true,
+      googleReviewUrl: 'https://g.page/r/client789-construction/review',
+      trustpilotReviewUrl: 'https://trustpilot.com/review/client789construction.com'
     });
   };
 
@@ -339,6 +365,81 @@ export const MicrositeGenerator = () => {
                 placeholder="https://hooks.zapier.com/hooks/catch/..."
               />
             </div>
+          </div>
+
+          <div>
+            <Label htmlFor="calendlyUrl">Calendly Booking URL (Optional)</Label>
+            <Input
+              id="calendlyUrl"
+              value={formData.calendlyUrl}
+              onChange={(e) => setFormData(prev => ({ ...prev, calendlyUrl: e.target.value }))}
+              placeholder="https://calendly.com/your-username/consultation"
+            />
+          </div>
+
+          {/* Portfolio Settings */}
+          <div className="space-y-4 p-4 border rounded-lg">
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="showPortfolio"
+                checked={formData.showPortfolio}
+                onChange={(e) => setFormData(prev => ({ ...prev, showPortfolio: e.target.checked }))}
+                className="rounded border-border"
+              />
+              <Label htmlFor="showPortfolio">Include Portfolio/Previous Work</Label>
+            </div>
+            
+            {formData.showPortfolio && (
+              <div className="space-y-3 ml-6">
+                <div>
+                  <Label htmlFor="portfolioMaxItems">Maximum portfolio items</Label>
+                  <Input
+                    id="portfolioMaxItems"
+                    type="number"
+                    min="1"
+                    max="20"
+                    value={formData.portfolioMaxItems}
+                    onChange={(e) => setFormData(prev => ({ ...prev, portfolioMaxItems: parseInt(e.target.value) || 9 }))}
+                  />
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="portfolioShowReviews"
+                    checked={formData.portfolioShowReviews}
+                    onChange={(e) => setFormData(prev => ({ ...prev, portfolioShowReviews: e.target.checked }))}
+                    className="rounded border-border"
+                  />
+                  <Label htmlFor="portfolioShowReviews">Show client reviews</Label>
+                </div>
+                
+                {formData.portfolioShowReviews && (
+                  <div className="space-y-3">
+                    <div>
+                      <Label htmlFor="googleReviewUrl">Google Review URL</Label>
+                      <Input
+                        id="googleReviewUrl"
+                        value={formData.googleReviewUrl}
+                        onChange={(e) => setFormData(prev => ({ ...prev, googleReviewUrl: e.target.value }))}
+                        placeholder="https://g.page/r/your-business/review"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="trustpilotReviewUrl">Trustpilot Review URL</Label>
+                      <Input
+                        id="trustpilotReviewUrl"
+                        value={formData.trustpilotReviewUrl}
+                        onChange={(e) => setFormData(prev => ({ ...prev, trustpilotReviewUrl: e.target.value }))}
+                        placeholder="https://trustpilot.com/review/your-business.com"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <Button 
