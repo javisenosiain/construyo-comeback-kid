@@ -3,8 +3,11 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
 import Navigation from "./components/Navigation";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Index from "./pages/Index";
+import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Leads from "./pages/Leads";
 import Invoices from "./pages/Invoices";
@@ -19,19 +22,53 @@ const queryClient = new QueryClient();
 const AppContent = () => {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
+  const isAuthPage = location.pathname === "/auth";
 
   return (
     <>
-      {!isHomePage && <Navigation />}
+      {!isHomePage && !isAuthPage && (
+        <ProtectedRoute>
+          <Navigation />
+        </ProtectedRoute>
+      )}
       <Routes>
         <Route path="/" element={<Index />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/leads" element={<Leads />} />
-        <Route path="/invoices" element={<Invoices />} />
-        <Route path="/payments" element={<Payments />} />
-        <Route path="/reviews" element={<Reviews />} />
-        <Route path="/social" element={<SocialMedia />} />
-        <Route path="/settings" element={<Settings />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/leads" element={
+          <ProtectedRoute>
+            <Leads />
+          </ProtectedRoute>
+        } />
+        <Route path="/invoices" element={
+          <ProtectedRoute>
+            <Invoices />
+          </ProtectedRoute>
+        } />
+        <Route path="/payments" element={
+          <ProtectedRoute>
+            <Payments />
+          </ProtectedRoute>
+        } />
+        <Route path="/reviews" element={
+          <ProtectedRoute>
+            <Reviews />
+          </ProtectedRoute>
+        } />
+        <Route path="/social" element={
+          <ProtectedRoute>
+            <SocialMedia />
+          </ProtectedRoute>
+        } />
+        <Route path="/settings" element={
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
+        } />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
@@ -42,11 +79,13 @@ const AppContent = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AppContent />
-      </BrowserRouter>
+      <AuthProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AppContent />
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

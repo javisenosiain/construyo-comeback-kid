@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Building2, Menu, X, Users, FileText, CreditCard, Star, Share2, Settings, BarChart3 } from "lucide-react";
+import { Building2, Menu, X, Users, FileText, CreditCard, Star, Share2, Settings, BarChart3, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { user, signOut } = useAuth();
 
   const navigationItems = [
     { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
@@ -60,6 +63,31 @@ const Navigation = () => {
             <NavItems />
           </div>
 
+          {/* User Menu */}
+          <div className="hidden md:flex items-center gap-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="text-sidebar-foreground">
+                  <User className="w-5 h-5 mr-2" />
+                  {user?.email}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Link to="/settings">
+                    <Settings className="w-4 h-4 mr-2" />
+                    Settings
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => signOut()}>
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
           {/* Mobile Menu */}
           <div className="md:hidden">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -85,6 +113,16 @@ const Navigation = () => {
                 </div>
                 <div className="flex flex-col gap-2">
                   <NavItems mobile />
+                  <div className="pt-4 border-t border-sidebar-border">
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-start text-sidebar-foreground"
+                      onClick={() => signOut()}
+                    >
+                      <LogOut className="w-5 h-5 mr-3" />
+                      Sign Out
+                    </Button>
+                  </div>
                 </div>
               </SheetContent>
             </Sheet>
