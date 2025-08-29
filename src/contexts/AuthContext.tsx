@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import { clientRateLimit, isValidEmail } from '@/lib/security';
 
 interface AuthContextType {
   user: User | null;
@@ -77,6 +78,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signUp = async (email: string, password: string, fullName?: string) => {
     try {
+      // Input validation
+      if (!isValidEmail(email)) {
+        toast({
+          title: "Invalid Email",
+          description: "Please enter a valid email address",
+          variant: "destructive",
+        });
+        return { error: new Error("Invalid email") as AuthError };
+      }
+      
+      if (password.length < 6) {
+        toast({
+          title: "Weak Password",
+          description: "Password must be at least 6 characters long",
+          variant: "destructive",
+        });
+        return { error: new Error("Password too short") as AuthError };
+      }
+      
+      // Rate limiting
+      const rateLimitKey = `signup_${email}`;
+      if (!clientRateLimit.isAllowed(rateLimitKey, 3, 5 * 60 * 1000)) {
+        toast({
+          title: "Too Many Attempts",
+          description: "Too many signup attempts. Please try again later.",
+          variant: "destructive",
+        });
+        return { error: new Error("Rate limited") as AuthError };
+      }
+      
       const redirectUrl = `${window.location.origin}/dashboard`;
       
       const { error } = await supabase.auth.signUp({
@@ -97,6 +128,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           variant: "destructive",
         });
       } else {
+        // Clear rate limit on success
+        clientRateLimit.clear(rateLimitKey);
         toast({
           title: "Check your email",
           description: "We've sent you a confirmation link to complete your registration.",
@@ -117,6 +150,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signIn = async (email: string, password: string) => {
     try {
+      // Input validation
+      if (!isValidEmail(email)) {
+        toast({
+          title: "Invalid Email",
+          description: "Please enter a valid email address",
+          variant: "destructive",
+        });
+        return { error: new Error("Invalid email") as AuthError };
+      }
+      
+      // Rate limiting
+      const rateLimitKey = `signin_${email}`;
+      if (!clientRateLimit.isAllowed(rateLimitKey, 5, 15 * 60 * 1000)) {
+        toast({
+          title: "Too Many Attempts",
+          description: "Too many login attempts. Please try again later.",
+          variant: "destructive",
+        });
+        return { error: new Error("Rate limited") as AuthError };
+      }
+      
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -129,6 +183,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           variant: "destructive",
         });
       } else {
+        // Clear rate limit on success
+        clientRateLimit.clear(rateLimitKey);
         toast({
           title: "Welcome back!",
           description: "You have successfully signed in.",
