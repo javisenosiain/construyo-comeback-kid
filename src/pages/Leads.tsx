@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import AddLeadDialog from "@/components/AddLeadDialog";
 import ReferralSystem from "@/components/ReferralSystem";
 import LeadCaptureBuilder from "@/components/LeadCaptureBuilder";
+import PlanningDataScraper from "@/components/PlanningDataScraper";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
