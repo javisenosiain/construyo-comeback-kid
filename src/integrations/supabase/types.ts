@@ -198,7 +198,7 @@ export type Database = {
           specialties: string[] | null
           stripe_account_id: string | null
           updated_at: string
-          user_id: string | null
+          user_id: string
           whatsapp_number: string | null
         }
         Insert: {
@@ -217,7 +217,7 @@ export type Database = {
           specialties?: string[] | null
           stripe_account_id?: string | null
           updated_at?: string
-          user_id?: string | null
+          user_id: string
           whatsapp_number?: string | null
         }
         Update: {
@@ -236,7 +236,7 @@ export type Database = {
           specialties?: string[] | null
           stripe_account_id?: string | null
           updated_at?: string
-          user_id?: string | null
+          user_id?: string
           whatsapp_number?: string | null
         }
         Relationships: []
