@@ -241,6 +241,173 @@ export type Database = {
         }
         Relationships: []
       }
+      catalogue_analytics: {
+        Row: {
+          catalogue_item_id: string | null
+          created_at: string
+          event_data: Json | null
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          microsite_id: string | null
+          referrer: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          catalogue_item_id?: string | null
+          created_at?: string
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          microsite_id?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          catalogue_item_id?: string | null
+          created_at?: string
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          microsite_id?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalogue_analytics_catalogue_item_id_fkey"
+            columns: ["catalogue_item_id"]
+            isOneToOne: false
+            referencedRelation: "catalogue_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalogue_analytics_microsite_id_fkey"
+            columns: ["microsite_id"]
+            isOneToOne: false
+            referencedRelation: "microsites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      catalogue_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean
+          name: string
+          sort_order: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          sort_order?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          sort_order?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      catalogue_items: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          description: string | null
+          duration_estimate: string | null
+          features: string[] | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          is_featured: boolean | null
+          name: string
+          price: number | null
+          price_display: string | null
+          pricing_type: string
+          seo_description: string | null
+          seo_title: string | null
+          short_description: string | null
+          sort_order: number | null
+          tags: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          duration_estimate?: string | null
+          features?: string[] | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          is_featured?: boolean | null
+          name: string
+          price?: number | null
+          price_display?: string | null
+          pricing_type?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          short_description?: string | null
+          sort_order?: number | null
+          tags?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          duration_estimate?: string | null
+          features?: string[] | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          is_featured?: boolean | null
+          name?: string
+          price?: number | null
+          price_display?: string | null
+          pricing_type?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          short_description?: string | null
+          sort_order?: number | null
+          tags?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalogue_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "catalogue_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       companies: {
         Row: {
           created_at: string | null
@@ -1432,6 +1599,87 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quote_requests: {
+        Row: {
+          calendly_event_id: string | null
+          calendly_event_url: string | null
+          catalogue_item_id: string | null
+          created_at: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string | null
+          estimated_budget: string | null
+          form_data: Json | null
+          id: string
+          microsite_id: string | null
+          preferred_timeline: string | null
+          project_description: string | null
+          quote_amount: number | null
+          quote_notes: string | null
+          source_url: string | null
+          status: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          calendly_event_id?: string | null
+          calendly_event_url?: string | null
+          catalogue_item_id?: string | null
+          created_at?: string
+          customer_email: string
+          customer_name: string
+          customer_phone?: string | null
+          estimated_budget?: string | null
+          form_data?: Json | null
+          id?: string
+          microsite_id?: string | null
+          preferred_timeline?: string | null
+          project_description?: string | null
+          quote_amount?: number | null
+          quote_notes?: string | null
+          source_url?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          calendly_event_id?: string | null
+          calendly_event_url?: string | null
+          catalogue_item_id?: string | null
+          created_at?: string
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string | null
+          estimated_budget?: string | null
+          form_data?: Json | null
+          id?: string
+          microsite_id?: string | null
+          preferred_timeline?: string | null
+          project_description?: string | null
+          quote_amount?: number | null
+          quote_notes?: string | null
+          source_url?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_requests_catalogue_item_id_fkey"
+            columns: ["catalogue_item_id"]
+            isOneToOne: false
+            referencedRelation: "catalogue_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_requests_microsite_id_fkey"
+            columns: ["microsite_id"]
+            isOneToOne: false
+            referencedRelation: "microsites"
             referencedColumns: ["id"]
           },
         ]
