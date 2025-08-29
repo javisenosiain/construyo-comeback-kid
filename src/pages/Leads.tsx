@@ -1,23 +1,17 @@
 import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import AddLeadDialog from "@/components/AddLeadDialog";
+import ReferralSystem from "@/components/ReferralSystem";
+import LeadCaptureBuilder from "@/components/LeadCaptureBuilder";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  Search,
-  Phone,
-  Mail,
-  MapPin,
-  Calendar,
-  Filter,
-  Edit,
-  Trash2
-} from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Plus, Phone, Mail, User, Building, Calendar, MapPin, Eye, Users, TrendingUp, Share2, Code2, Search, Edit, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/components/ui/use-toast";
-import AddLeadDialog from "@/components/AddLeadDialog";
 
 interface Lead {
   id: string;
@@ -51,7 +45,6 @@ const Leads = () => {
   });
   
   const { user } = useAuth();
-  const { toast } = useToast();
 
   useEffect(() => {
     if (user) {
@@ -73,11 +66,7 @@ const Leads = () => {
       calculateStats(data || []);
     } catch (error) {
       console.error('Error fetching leads:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch leads. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to fetch leads. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -106,17 +95,10 @@ const Leads = () => {
         lead.id === leadId ? { ...lead, status: newStatus } : lead
       ));
 
-      toast({
-        title: "Lead updated",
-        description: `Lead status changed to ${newStatus}`,
-      });
+      toast.success(`Lead status changed to ${newStatus}`);
     } catch (error) {
       console.error('Error updating lead:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update lead status.",
-        variant: "destructive",
-      });
+      toast.error("Failed to update lead status.");
     }
   };
 
@@ -130,17 +112,10 @@ const Leads = () => {
       if (error) throw error;
 
       setLeads(prev => prev.filter(lead => lead.id !== leadId));
-      toast({
-        title: "Lead deleted",
-        description: "Lead has been successfully deleted.",
-      });
+      toast.success("Lead has been successfully deleted.");
     } catch (error) {
       console.error('Error deleting lead:', error);
-      toast({
-        title: "Error",
-        description: "Failed to delete lead.",
-        variant: "destructive",
-      });
+      toast.error("Failed to delete lead.");
     }
   };
 
