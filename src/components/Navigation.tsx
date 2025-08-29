@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Building2, Menu, X, Users, FileText, CreditCard, Star, Share2, Settings } from "lucide-react";
+import { Building2, Menu, X, Users, FileText, CreditCard, Star, Share2, Settings, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
@@ -9,7 +9,7 @@ const Navigation = () => {
   const location = useLocation();
 
   const navigationItems = [
-    { href: "/dashboard", label: "Dashboard", icon: Building2 },
+    { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
     { href: "/leads", label: "Leads", icon: Users },
     { href: "/invoices", label: "Invoices", icon: FileText },
     { href: "/payments", label: "Payments", icon: CreditCard },
