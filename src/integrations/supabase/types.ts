@@ -14,6 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: unknown | null
+          record_id: string
+          sensitive_fields: string[] | null
+          table_name: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          record_id: string
+          sensitive_fields?: string[] | null
+          table_name: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          record_id?: string
+          sensitive_fields?: string[] | null
+          table_name?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      auth_rate_limits: {
+        Row: {
+          attempt_count: number | null
+          blocked_until: string | null
+          email: string | null
+          first_attempt_at: string | null
+          id: string
+          ip_address: unknown
+          last_attempt_at: string | null
+        }
+        Insert: {
+          attempt_count?: number | null
+          blocked_until?: string | null
+          email?: string | null
+          first_attempt_at?: string | null
+          id?: string
+          ip_address: unknown
+          last_attempt_at?: string | null
+        }
+        Update: {
+          attempt_count?: number | null
+          blocked_until?: string | null
+          email?: string | null
+          first_attempt_at?: string | null
+          id?: string
+          ip_address?: unknown
+          last_attempt_at?: string | null
+        }
+        Relationships: []
+      }
       automation_logs: {
         Row: {
           created_at: string | null
@@ -261,6 +327,7 @@ export type Database = {
           request_token: string | null
           requested_date: string | null
           status: string | null
+          token_expires_at: string | null
           updated_at: string
           user_id: string | null
         }
@@ -279,6 +346,7 @@ export type Database = {
           request_token?: string | null
           requested_date?: string | null
           status?: string | null
+          token_expires_at?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -297,6 +365,7 @@ export type Database = {
           request_token?: string | null
           requested_date?: string | null
           status?: string | null
+          token_expires_at?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -1283,6 +1352,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_auth_rate_limit: {
+        Args: { p_email?: string; p_ip_address: unknown }
+        Returns: boolean
+      }
+      encrypt_sensitive_data: {
+        Args: { data: string }
+        Returns: string
+      }
       generate_invoice_number: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -1290,6 +1367,15 @@ export type Database = {
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      log_sensitive_access: {
+        Args: {
+          p_action: string
+          p_record_id: string
+          p_sensitive_fields?: string[]
+          p_table_name: string
+        }
+        Returns: undefined
       }
     }
     Enums: {
