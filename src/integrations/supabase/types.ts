@@ -1075,6 +1075,91 @@ export type Database = {
           },
         ]
       }
+      microsite_analytics: {
+        Row: {
+          created_at: string
+          event_data: Json | null
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          microsite_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          microsite_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          microsite_id?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "microsite_analytics_microsite_id_fkey"
+            columns: ["microsite_id"]
+            isOneToOne: false
+            referencedRelation: "microsites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      microsites: {
+        Row: {
+          analytics_data: Json | null
+          client_name: string
+          created_at: string
+          domain_slug: string
+          form_id: string | null
+          id: string
+          is_active: boolean
+          microsite_data: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          analytics_data?: Json | null
+          client_name: string
+          created_at?: string
+          domain_slug: string
+          form_id?: string | null
+          id?: string
+          is_active?: boolean
+          microsite_data?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          analytics_data?: Json | null
+          client_name?: string
+          created_at?: string
+          domain_slug?: string
+          form_id?: string | null
+          id?: string
+          is_active?: boolean
+          microsite_data?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "microsites_form_id_fkey"
+            columns: ["form_id"]
+            isOneToOne: false
+            referencedRelation: "lead_capture_forms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number

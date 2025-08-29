@@ -16,6 +16,7 @@ import Payments from "./pages/Payments";
 import Reviews from "./pages/Reviews";
 import SocialMedia from "./pages/SocialMedia";
 import Settings from "./pages/Settings";
+import Microsites from "./pages/Microsites";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -73,6 +74,11 @@ const AppContent = () => {
         <Route path="/settings" element={
           <ProtectedRoute>
             <Settings />
+          </ProtectedRoute>
+        } />
+        <Route path="/microsites" element={
+          <ProtectedRoute>
+            <Microsites />
           </ProtectedRoute>
         } />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
