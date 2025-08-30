@@ -1807,42 +1807,68 @@ export type Database = {
       }
       referral_codes: {
         Row: {
+          campaign_name: string | null
           code: string
           created_at: string
           id: string
           is_active: boolean | null
+          last_sent_at: string | null
           referral_message: string | null
+          reward_description: string | null
+          target_microsite_id: string | null
           total_clicks: number | null
           total_conversions: number | null
+          total_failed: number | null
+          total_sent: number | null
           updated_at: string
           user_id: string | null
           whatsapp_template: string | null
         }
         Insert: {
+          campaign_name?: string | null
           code: string
           created_at?: string
           id?: string
           is_active?: boolean | null
+          last_sent_at?: string | null
           referral_message?: string | null
+          reward_description?: string | null
+          target_microsite_id?: string | null
           total_clicks?: number | null
           total_conversions?: number | null
+          total_failed?: number | null
+          total_sent?: number | null
           updated_at?: string
           user_id?: string | null
           whatsapp_template?: string | null
         }
         Update: {
+          campaign_name?: string | null
           code?: string
           created_at?: string
           id?: string
           is_active?: boolean | null
+          last_sent_at?: string | null
           referral_message?: string | null
+          reward_description?: string | null
+          target_microsite_id?: string | null
           total_clicks?: number | null
           total_conversions?: number | null
+          total_failed?: number | null
+          total_sent?: number | null
           updated_at?: string
           user_id?: string | null
           whatsapp_template?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "referral_codes_target_microsite_id_fkey"
+            columns: ["target_microsite_id"]
+            isOneToOne: false
+            referencedRelation: "microsites"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       referrals: {
         Row: {
@@ -2057,6 +2083,101 @@ export type Database = {
           role?: string
         }
         Relationships: []
+      }
+      whatsapp_contacts: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          last_sent_at: string | null
+          last_updated: string | null
+          name: string | null
+          phone: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_sent_at?: string | null
+          last_updated?: string | null
+          name?: string | null
+          phone: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_sent_at?: string | null
+          last_updated?: string | null
+          name?: string | null
+          phone?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      whatsapp_referral_logs: {
+        Row: {
+          activity_type: string
+          campaign_id: string | null
+          clicked_at: string | null
+          contact_name: string | null
+          contact_phone: string
+          converted_at: string | null
+          created_at: string
+          delivered_at: string | null
+          error_message: string | null
+          id: string
+          message_id: string | null
+          read_at: string | null
+          referral_link: string | null
+          sent_at: string | null
+        }
+        Insert: {
+          activity_type: string
+          campaign_id?: string | null
+          clicked_at?: string | null
+          contact_name?: string | null
+          contact_phone: string
+          converted_at?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          error_message?: string | null
+          id?: string
+          message_id?: string | null
+          read_at?: string | null
+          referral_link?: string | null
+          sent_at?: string | null
+        }
+        Update: {
+          activity_type?: string
+          campaign_id?: string | null
+          clicked_at?: string | null
+          contact_name?: string | null
+          contact_phone?: string
+          converted_at?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          error_message?: string | null
+          id?: string
+          message_id?: string | null
+          read_at?: string | null
+          referral_link?: string | null
+          sent_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_referral_logs_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "referral_codes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

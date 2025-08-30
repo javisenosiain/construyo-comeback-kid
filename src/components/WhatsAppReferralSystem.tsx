@@ -13,15 +13,20 @@ import { Copy, MessageCircle, BarChart, Users, Send, Link as LinkIcon } from "lu
 
 interface ReferralCampaign {
   id: string;
-  campaign_name: string;
-  referral_code: string;
+  campaign_name?: string;
+  code: string;
   whatsapp_template: string;
   referral_message: string;
-  target_microsite_id: string;
+  target_microsite_id?: string;
   is_active: boolean;
   total_clicks: number;
   total_conversions: number;
+  total_sent?: number;
+  total_failed?: number;
+  reward_description?: string;
   created_at: string;
+  user_id: string;
+  updated_at: string;
 }
 
 interface WhatsAppContact {
@@ -203,10 +208,14 @@ export const WhatsAppReferralSystem: React.FC = () => {
    */
   const generateReferralLink = (campaign: ReferralCampaign): string => {
     const microsite = microsites.find(m => m.id === campaign.target_microsite_id);
-    if (!microsite) return '';
+    if (!microsite) {
+      // Fallback to main domain with referral code
+      const baseUrl = window.location.origin;
+      return `${baseUrl}?ref=${campaign.code}&utm_source=whatsapp&utm_medium=referral`;
+    }
 
     const baseUrl = window.location.origin;
-    return `${baseUrl}/microsite/${microsite.domain_slug}?ref=${campaign.referral_code}&utm_source=whatsapp&utm_medium=referral&utm_campaign=${encodeURIComponent(campaign.campaign_name)}`;
+    return `${baseUrl}/microsite/${microsite.domain_slug}?ref=${campaign.code}&utm_source=whatsapp&utm_medium=referral&utm_campaign=${encodeURIComponent(campaign.campaign_name || 'referral')}`;
   };
 
   /**
@@ -442,7 +451,7 @@ export const WhatsAppReferralSystem: React.FC = () => {
                       <div>
                         <CardTitle className="text-base">{campaign.campaign_name || 'Unnamed Campaign'}</CardTitle>
                         <CardDescription>
-                          Code: {campaign.referral_code} • 
+                          Code: {campaign.code} • 
                           Clicks: {campaign.total_clicks} • 
                           Conversions: {campaign.total_conversions}
                         </CardDescription>
