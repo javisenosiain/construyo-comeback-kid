@@ -720,6 +720,82 @@ export type Database = {
         }
         Relationships: []
       }
+      form_submissions: {
+        Row: {
+          created_at: string
+          encrypted_data: string | null
+          form_data: Json
+          form_id: string | null
+          id: string
+          ip_address: unknown | null
+          lead_id: string | null
+          microsite_id: string | null
+          referrer: string | null
+          submission_status: string
+          updated_at: string
+          user_agent: string | null
+          zapier_sent_at: string | null
+          zapier_status: string | null
+          zapier_webhook: string | null
+        }
+        Insert: {
+          created_at?: string
+          encrypted_data?: string | null
+          form_data?: Json
+          form_id?: string | null
+          id?: string
+          ip_address?: unknown | null
+          lead_id?: string | null
+          microsite_id?: string | null
+          referrer?: string | null
+          submission_status?: string
+          updated_at?: string
+          user_agent?: string | null
+          zapier_sent_at?: string | null
+          zapier_status?: string | null
+          zapier_webhook?: string | null
+        }
+        Update: {
+          created_at?: string
+          encrypted_data?: string | null
+          form_data?: Json
+          form_id?: string | null
+          id?: string
+          ip_address?: unknown | null
+          lead_id?: string | null
+          microsite_id?: string | null
+          referrer?: string | null
+          submission_status?: string
+          updated_at?: string
+          user_agent?: string | null
+          zapier_sent_at?: string | null
+          zapier_status?: string | null
+          zapier_webhook?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "form_submissions_form_id_fkey"
+            columns: ["form_id"]
+            isOneToOne: false
+            referencedRelation: "lead_capture_forms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "form_submissions_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "form_submissions_microsite_id_fkey"
+            columns: ["microsite_id"]
+            isOneToOne: false
+            referencedRelation: "microsites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoices: {
         Row: {
           amount: number
