@@ -23,16 +23,16 @@ const AddLeadDialog = ({ onLeadAdded }: AddLeadDialogProps) => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    name: '',
+    customer_name: '',
     email: '',
     phone: '',
     project_type: '',
     description: '',
-    location: '',
-    budget_min: '',
-    budget_max: '',
+    address: '',
+    budget_range: '',
     source: 'manual',
-    priority: 'medium'
+    priority: 'medium',
+    status: 'new'
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -48,9 +48,7 @@ const AddLeadDialog = ({ onLeadAdded }: AddLeadDialogProps) => {
     try {
       const leadData = {
         ...formData,
-        user_id: user.id,
-        budget_min: formData.budget_min ? parseFloat(formData.budget_min) : null,
-        budget_max: formData.budget_max ? parseFloat(formData.budget_max) : null,
+        customer_id: user.id,
       };
 
       const { error } = await supabase
@@ -61,20 +59,20 @@ const AddLeadDialog = ({ onLeadAdded }: AddLeadDialogProps) => {
 
       toast({
         title: "Lead added successfully",
-        description: `${formData.name} has been added to your leads.`,
+        description: `${formData.customer_name} has been added to your leads.`,
       });
 
       setFormData({
-        name: '',
+        customer_name: '',
         email: '',
         phone: '',
         project_type: '',
         description: '',
-        location: '',
-        budget_min: '',
-        budget_max: '',
+        address: '',
+        budget_range: '',
         source: 'manual',
-        priority: 'medium'
+        priority: 'medium',
+        status: 'new'
       });
 
       setOpen(false);
@@ -114,11 +112,11 @@ const AddLeadDialog = ({ onLeadAdded }: AddLeadDialogProps) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="name">Full Name *</Label>
+              <Label htmlFor="customer_name">Full Name *</Label>
               <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => handleInputChange('name', e.target.value)}
+                id="customer_name"
+                value={formData.customer_name}
+                onChange={(e) => handleInputChange('customer_name', e.target.value)}
                 placeholder="Enter customer name"
                 required
               />
@@ -146,11 +144,11 @@ const AddLeadDialog = ({ onLeadAdded }: AddLeadDialogProps) => {
               />
             </div>
             <div>
-              <Label htmlFor="location">Location</Label>
+              <Label htmlFor="address">Address</Label>
               <Input
-                id="location"
-                value={formData.location}
-                onChange={(e) => handleInputChange('location', e.target.value)}
+                id="address"
+                value={formData.address}
+                onChange={(e) => handleInputChange('address', e.target.value)}
                 placeholder="City, Postcode"
               />
             </div>
@@ -189,22 +187,20 @@ const AddLeadDialog = ({ onLeadAdded }: AddLeadDialogProps) => {
 
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="budget_min">Budget Range (£)</Label>
-              <div className="flex gap-2">
-                <Input
-                  id="budget_min"
-                  type="number"
-                  value={formData.budget_min}
-                  onChange={(e) => handleInputChange('budget_min', e.target.value)}
-                  placeholder="Min"
-                />
-                <Input
-                  type="number"
-                  value={formData.budget_max}
-                  onChange={(e) => handleInputChange('budget_max', e.target.value)}
-                  placeholder="Max"
-                />
-              </div>
+              <Label htmlFor="budget_range">Budget Range</Label>
+              <Select onValueChange={(value) => handleInputChange('budget_range', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select budget range" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="under_5k">Under £5,000</SelectItem>
+                  <SelectItem value="5k_15k">£5,000 - £15,000</SelectItem>
+                  <SelectItem value="15k_30k">£15,000 - £30,000</SelectItem>
+                  <SelectItem value="30k_50k">£30,000 - £50,000</SelectItem>
+                  <SelectItem value="50k_100k">£50,000 - £100,000</SelectItem>
+                  <SelectItem value="over_100k">Over £100,000</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <Label htmlFor="priority">Priority</Label>

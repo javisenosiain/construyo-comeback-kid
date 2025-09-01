@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,6 +47,7 @@ const FIELD_TYPES = [
 ];
 
 export default function LeadCaptureBuilder() {
+  const { user } = useAuth();
   const [forms, setForms] = useState<LeadCaptureForm[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
@@ -104,7 +106,7 @@ export default function LeadCaptureBuilder() {
   };
 
   const saveForm = async () => {
-    if (!editingForm) return;
+    if (!editingForm || !user) return;
 
     setCreating(true);
     try {
@@ -118,7 +120,8 @@ export default function LeadCaptureBuilder() {
         thank_you_message: editingForm.thank_you_message || '',
         embed_code: embedCode,
         fields: JSON.stringify(editingForm.fields || []),
-        is_active: editingForm.is_active ?? true
+        is_active: editingForm.is_active ?? true,
+        user_id: user.id
       };
 
       let result;

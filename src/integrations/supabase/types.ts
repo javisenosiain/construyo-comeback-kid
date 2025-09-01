@@ -464,7 +464,7 @@ export type Database = {
           status: string | null
           stripe_payment_intent_id: string | null
           updated_at: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           amount: number
@@ -483,7 +483,7 @@ export type Database = {
           status?: string | null
           stripe_payment_intent_id?: string | null
           updated_at?: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           amount?: number
@@ -502,7 +502,7 @@ export type Database = {
           status?: string | null
           stripe_payment_intent_id?: string | null
           updated_at?: string
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -532,7 +532,7 @@ export type Database = {
           status: string | null
           token_expires_at: string | null
           updated_at: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           comment?: string | null
@@ -551,7 +551,7 @@ export type Database = {
           status?: string | null
           token_expires_at?: string | null
           updated_at?: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           comment?: string | null
@@ -570,7 +570,7 @@ export type Database = {
           status?: string | null
           token_expires_at?: string | null
           updated_at?: string
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -1149,7 +1149,7 @@ export type Database = {
           redirect_url: string | null
           thank_you_message: string | null
           updated_at: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           created_at?: string
@@ -1163,7 +1163,7 @@ export type Database = {
           redirect_url?: string | null
           thank_you_message?: string | null
           updated_at?: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           created_at?: string
@@ -1177,7 +1177,7 @@ export type Database = {
           redirect_url?: string | null
           thank_you_message?: string | null
           updated_at?: string
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -1187,7 +1187,7 @@ export type Database = {
           budget_range: string | null
           builder_id: string | null
           created_at: string | null
-          customer_id: string | null
+          customer_id: string
           customer_name: string | null
           description: string | null
           email: string | null
@@ -1208,7 +1208,7 @@ export type Database = {
           budget_range?: string | null
           builder_id?: string | null
           created_at?: string | null
-          customer_id?: string | null
+          customer_id?: string
           customer_name?: string | null
           description?: string | null
           email?: string | null
@@ -1229,7 +1229,7 @@ export type Database = {
           budget_range?: string | null
           builder_id?: string | null
           created_at?: string | null
-          customer_id?: string | null
+          customer_id?: string
           customer_name?: string | null
           description?: string | null
           email?: string | null
@@ -1998,6 +1998,48 @@ export type Database = {
           },
         ]
       }
+      security_events: {
+        Row: {
+          created_at: string | null
+          event_data: Json | null
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          record_id: string | null
+          risk_level: string | null
+          sensitive_data_accessed: string[] | null
+          table_name: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          record_id?: string | null
+          risk_level?: string | null
+          sensitive_data_accessed?: string[] | null
+          table_name?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          record_id?: string | null
+          risk_level?: string | null
+          sensitive_data_accessed?: string[] | null
+          table_name?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       social_posts: {
         Row: {
           content: string | null
@@ -2056,6 +2098,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      submission_rate_limits: {
+        Row: {
+          blocked_until: string | null
+          created_at: string | null
+          endpoint: string
+          id: string
+          ip_address: unknown
+          submissions_count: number | null
+          window_start: string | null
+        }
+        Insert: {
+          blocked_until?: string | null
+          created_at?: string | null
+          endpoint: string
+          id?: string
+          ip_address: unknown
+          submissions_count?: number | null
+          window_start?: string | null
+        }
+        Update: {
+          blocked_until?: string | null
+          created_at?: string | null
+          endpoint?: string
+          id?: string
+          ip_address?: unknown
+          submissions_count?: number | null
+          window_start?: string | null
+        }
+        Relationships: []
       }
       users: {
         Row: {
@@ -2207,6 +2279,17 @@ export type Database = {
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      log_security_event: {
+        Args: {
+          p_event_data?: Json
+          p_event_type: string
+          p_record_id?: string
+          p_risk_level?: string
+          p_sensitive_data?: string[]
+          p_table_name?: string
+        }
+        Returns: undefined
       }
       log_sensitive_access: {
         Args: {
