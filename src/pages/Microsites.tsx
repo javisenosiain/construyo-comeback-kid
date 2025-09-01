@@ -1,7 +1,9 @@
 import React from 'react';
 import { MicrositeGenerator } from '@/components/MicrositeGenerator';
+import { WhatsAppReferralSystem } from '@/components/WhatsAppReferralSystem';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Globe, Zap, BarChart, Smartphone } from 'lucide-react';
+import { Globe, Zap, BarChart, Smartphone, MessageCircle } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Microsites = () => {
   return (
@@ -55,19 +57,32 @@ const Microsites = () => {
 
         <Card>
           <CardHeader className="text-center">
-            <BarChart className="h-12 w-12 mx-auto text-primary mb-2" />
-            <CardTitle className="text-lg">Analytics Tracking</CardTitle>
+            <MessageCircle className="h-12 w-12 mx-auto text-primary mb-2" />
+            <CardTitle className="text-lg">WhatsApp Referrals</CardTitle>
           </CardHeader>
           <CardContent>
             <CardDescription>
-              Track site visits, form submissions, and engagement metrics
+              Send trackable referral links via WhatsApp with respond.io integration
             </CardDescription>
           </CardContent>
         </Card>
       </div>
 
-      {/* Microsite Generator Component */}
-      <MicrositeGenerator />
+      {/* Tabbed Interface for Microsites and Referrals */}
+      <Tabs defaultValue="generator" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="generator">Microsite Generator</TabsTrigger>
+          <TabsTrigger value="referrals">WhatsApp Referrals</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="generator">
+          <MicrositeGenerator />
+        </TabsContent>
+
+        <TabsContent value="referrals">
+          <WhatsAppReferralSystem />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
