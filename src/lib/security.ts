@@ -71,13 +71,90 @@ export function hasDangerousContent(input: string): boolean {
     /onload=/i,
     /onerror=/i,
     /onclick=/i,
+    /onmouseover=/i,
+    /onfocus=/i,
+    /onblur=/i,
     /data:text\/html/i,
     /<iframe/i,
     /<object/i,
-    /<embed/i
+    /<embed/i,
+    /<form/i,
+    /<input/i,
+    /eval\(/i,
+    /expression\(/i,
+    /url\(/i,
+    /@import/i
   ];
   
   return dangerousPatterns.some(pattern => pattern.test(input));
+}
+
+/**
+ * Enhanced input validation for forms
+ */
+export function validateFormInput(input: string, fieldType: string = 'text'): { isValid: boolean; message?: string } {
+  if (!input || typeof input !== 'string') {
+    return { isValid: false, message: 'Input is required' };
+  }
+
+  // Check for dangerous content
+  if (hasDangerousContent(input)) {
+    return { isValid: false, message: 'Input contains potentially dangerous content' };
+  }
+
+  // Field-specific validation
+  switch (fieldType) {
+    case 'email':
+      if (!isValidEmail(input)) {
+        return { isValid: false, message: 'Invalid email format' };
+      }
+      break;
+    case 'phone':
+      if (!isValidPhone(input)) {
+        return { isValid: false, message: 'Invalid phone number format' };
+      }
+      break;
+    case 'name':
+      if (input.length < 2 || input.length > 100) {
+        return { isValid: false, message: 'Name must be between 2 and 100 characters' };
+      }
+      if (!/^[a-zA-Z\s\-'\.]+$/.test(input)) {
+        return { isValid: false, message: 'Name contains invalid characters' };
+      }
+      break;
+    case 'text':
+      if (input.length > 5000) {
+        return { isValid: false, message: 'Text is too long (max 5000 characters)' };
+      }
+      break;
+    case 'url':
+      try {
+        new URL(input);
+      } catch {
+        return { isValid: false, message: 'Invalid URL format' };
+      }
+      break;
+  }
+
+  return { isValid: true };
+}
+
+/**
+ * Content Security Policy generator
+ */
+export function generateCSPHeader(): string {
+  return [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co https://cdn.jsdelivr.net",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com",
+    "img-src 'self' data: https://*.supabase.co https:",
+    "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+    "frame-src 'none'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'"
+  ].join('; ');
 }
 
 /**

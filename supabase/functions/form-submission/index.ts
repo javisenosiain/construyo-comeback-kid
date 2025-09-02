@@ -59,7 +59,7 @@ serve(async (req) => {
     });
 
     // Enhanced validation with security checks
-    const validationErrors = await validateSubmissionSecurity(payload, supabase);
+    const validationErrors = await validateSubmissionSecurity(payload, supabase, clientIP);
     if (validationErrors.length > 0) {
       await logSecurityEvent(supabase, 'validation_failed', clientIP, {
         errors: validationErrors
@@ -123,10 +123,22 @@ serve(async (req) => {
 });
 
 /**
- * Enhanced validation with security checks
+ * Enhanced validation with endpoint rate limiting and security monitoring
  */
-async function validateSubmissionSecurity(payload: FormSubmissionPayload, supabase: any): Promise<string[]> {
+async function validateSubmissionSecurity(payload: FormSubmissionPayload, supabase: any, clientIP: string): Promise<string[]> {
   const errors: string[] = [];
+
+  // Check endpoint rate limiting first
+  const { data: rateLimitResult } = await supabase.rpc('check_endpoint_rate_limit', {
+    p_endpoint: 'form_submission',
+    p_ip_address: clientIP,
+    p_max_requests: 20,
+    p_window_minutes: 60
+  });
+  
+  if (!rateLimitResult) {
+    errors.push('Rate limit exceeded. Please try again later.');
+  }
 
   // Basic validation
   if (!payload.formId?.match(/^[a-zA-Z0-9\-_]+$/)) {
@@ -137,24 +149,39 @@ async function validateSubmissionSecurity(payload: FormSubmissionPayload, supaba
     errors.push('Form data is required');
   }
 
-  // Security checks for malicious content
+  // Enhanced security checks for malicious content
   const suspiciousPatterns = [
     /<script/i, /javascript:/i, /data:text\/html/i, /vbscript:/i,
-    /onload=/i, /onclick=/i, /onerror=/i, /<iframe/i, /<object/i
+    /onload=/i, /onclick=/i, /onerror=/i, /onmouseover=/i, /onfocus=/i,
+    /<iframe/i, /<object/i, /<embed/i, /<form/i, /eval\(/i, /expression\(/i
   ];
 
   for (const [key, value] of Object.entries(payload.formData || {})) {
     if (typeof value === 'string') {
+      // Check for dangerous content
       for (const pattern of suspiciousPatterns) {
         if (pattern.test(value)) {
-          errors.push('Potentially malicious content detected');
+          errors.push('Security violation detected');
+          
+          // Log security event for dangerous content
+          await supabase.rpc('log_enhanced_security_event', {
+            p_event_type: 'malicious_input_detected',
+            p_ip_address: clientIP,
+            p_event_data: { field: key, pattern_detected: true },
+            p_risk_level: 'high'
+          });
           break;
         }
+      }
+      
+      // Check field length limits
+      if (value.length > 10000) {
+        errors.push(`Field ${key} exceeds maximum length`);
       }
     }
   }
 
-  // Validate email format with enhanced checks
+  // Enhanced email validation
   if (payload.formData.email) {
     const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
     if (!emailRegex.test(payload.formData.email)) {
@@ -162,10 +189,33 @@ async function validateSubmissionSecurity(payload: FormSubmissionPayload, supaba
     }
   }
 
+  // Phone validation
+  if (payload.formData.phone) {
+    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+    const cleanPhone = payload.formData.phone.replace(/[\s\-\(\)]/g, '');
+    if (!phoneRegex.test(cleanPhone)) {
+      errors.push('Invalid phone number format');
+    }
+  }
+
+  // Validate URLs if present
+  for (const [key, value] of Object.entries(payload.formData || {})) {
+    if (typeof value === 'string' && (key.includes('url') || key.includes('website'))) {
+      try {
+        new URL(value);
+        if (!value.startsWith('http://') && !value.startsWith('https://')) {
+          errors.push(`Invalid URL protocol in field: ${key}`);
+        }
+      } catch {
+        errors.push(`Invalid URL format in field: ${key}`);
+      }
+    }
+  }
+
   // Check if form exists and is active
   const { data: form, error: formError } = await supabase
     .from('lead_capture_forms')
-    .select('id, is_active')
+    .select('id, is_active, user_id')
     .eq('id', payload.formId)
     .eq('is_active', true)
     .single();

@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { sanitizeInput, validateFormInput } from '@/lib/security';
 
 interface FormField {
   id: string;
@@ -60,7 +61,7 @@ export const EmbeddableForm: React.FC<EmbeddableFormProps> = ({
   const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
 
   /**
-   * Validates individual field based on type and requirements
+   * Enhanced field validation using security utilities
    */
   const validateField = (field: FormField, value: string): string => {
     if (field.required && !value.trim()) {
@@ -68,6 +69,11 @@ export const EmbeddableForm: React.FC<EmbeddableFormProps> = ({
     }
 
     if (value.trim()) {
+      // Use enhanced validation from security module
+      const validation = validateFormInput(value, field.type);
+      if (!validation.isValid) {
+        return validation.message || 'Invalid input';
+      }
       switch (field.type) {
         case 'email':
           if (!emailRegex.test(value)) {

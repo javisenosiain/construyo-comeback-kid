@@ -114,7 +114,7 @@ export type Database = {
           rule_name: string
           trigger_type: string
           updated_at: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           actions?: Json | null
@@ -125,7 +125,7 @@ export type Database = {
           rule_name: string
           trigger_type: string
           updated_at?: string
-          user_id?: string | null
+          user_id?: string
         }
         Update: {
           actions?: Json | null
@@ -136,7 +136,7 @@ export type Database = {
           rule_name?: string
           trigger_type?: string
           updated_at?: string
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -148,7 +148,7 @@ export type Database = {
           id: string
           location: string | null
           services: string[] | null
-          user_id: string | null
+          user_id: string
           website: string | null
         }
         Insert: {
@@ -158,7 +158,7 @@ export type Database = {
           id?: string
           location?: string | null
           services?: string[] | null
-          user_id?: string | null
+          user_id?: string
           website?: string | null
         }
         Update: {
@@ -168,7 +168,7 @@ export type Database = {
           id?: string
           location?: string | null
           services?: string[] | null
-          user_id?: string | null
+          user_id?: string
           website?: string | null
         }
         Relationships: [
@@ -602,7 +602,7 @@ export type Database = {
           responded_at: string | null
           sent_at: string | null
           subject: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           automation_rule_id?: string | null
@@ -616,7 +616,7 @@ export type Database = {
           responded_at?: string | null
           sent_at?: string | null
           subject?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Update: {
           automation_rule_id?: string | null
@@ -630,7 +630,7 @@ export type Database = {
           responded_at?: string | null
           sent_at?: string | null
           subject?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -655,21 +655,21 @@ export type Database = {
           created_at: string | null
           id: string
           preferred_contact: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           address?: string | null
           created_at?: string | null
           id?: string
           preferred_contact?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Update: {
           address?: string | null
           created_at?: string | null
           id?: string
           preferred_contact?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -2260,6 +2260,15 @@ export type Database = {
         Args: { p_email?: string; p_ip_address: unknown }
         Returns: boolean
       }
+      check_endpoint_rate_limit: {
+        Args: {
+          p_endpoint: string
+          p_ip_address: unknown
+          p_max_requests?: number
+          p_window_minutes?: number
+        }
+        Returns: boolean
+      }
       cleanup_planning_cache: {
         Args: Record<PropertyKey, never>
         Returns: number
@@ -2279,6 +2288,18 @@ export type Database = {
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      log_enhanced_security_event: {
+        Args: {
+          p_event_data?: Json
+          p_event_type: string
+          p_ip_address?: unknown
+          p_record_id?: string
+          p_risk_level?: string
+          p_table_name?: string
+          p_user_agent?: string
+        }
+        Returns: undefined
       }
       log_security_event: {
         Args: {
