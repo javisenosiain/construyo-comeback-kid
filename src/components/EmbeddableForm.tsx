@@ -5,7 +5,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { sanitizeInput, validateFormInput } from '@/lib/security';
+import { 
+  sanitizeInput, 
+  validateFormInput, 
+  validateInputWithLogging,
+  hasDangerousContent 
+} from '@/lib/security';
 
 interface FormField {
   id: string;
@@ -69,6 +74,16 @@ export const EmbeddableForm: React.FC<EmbeddableFormProps> = ({
     }
 
     if (value.trim()) {
+      // Enhanced security validation with logging
+      const isSecure = validateInputWithLogging(value, field.label, (issue) => {
+        console.warn('Security validation issue:', issue);
+        // In production, this could trigger security alerts
+      });
+      
+      if (!isSecure) {
+        return 'Invalid characters detected';
+      }
+      
       // Use enhanced validation from security module
       const validation = validateFormInput(value, field.type);
       if (!validation.isValid) {

@@ -74,14 +74,15 @@ serve(async (req) => {
       });
     }
 
-    // Enhanced rate limiting with security tracking
-    const rateLimitCheck = await checkEnhancedRateLimit(supabase, clientIP, 'form-submission');
-    if (!rateLimitCheck.allowed) {
-      await logSecurityEvent(supabase, 'rate_limit_exceeded', clientIP, {
-        endpoint: 'form-submission',
-        attempts: rateLimitCheck.attempts
-      }, 'high');
-      
+    // Enhanced rate limiting using new database function
+    const { data: rateLimitAllowed } = await supabase.rpc('check_endpoint_rate_limit', {
+      p_endpoint: 'form-submission',
+      p_ip_address: clientIP,
+      p_max_requests: 10,
+      p_window_minutes: 15
+    });
+    
+    if (!rateLimitAllowed) {
       return new Response(JSON.stringify({
         success: false,
         errors: ['Too many submissions. Please try again later.']
@@ -94,9 +95,17 @@ serve(async (req) => {
     // Process the submission with enhanced security
     const result = await processSecureFormSubmission(supabase, payload, clientIP);
 
-    await logSecurityEvent(supabase, 'form_submission_success', clientIP, {
-      submissionId: result.submissionId,
-      leadId: result.leadId
+    // Enhanced security logging
+    await supabase.rpc('log_enhanced_security_event', {
+      p_event_type: 'form_submission_success',
+      p_ip_address: clientIP,
+      p_user_agent: req.headers.get('user-agent'),
+      p_event_data: {
+        submissionId: result.submissionId,
+        leadId: result.leadId,
+        formId: payload.formId
+      },
+      p_risk_level: 'low'
     });
 
     return new Response(JSON.stringify(result), {

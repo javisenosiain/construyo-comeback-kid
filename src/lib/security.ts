@@ -174,6 +174,37 @@ export function generateSecureToken(length: number = 32): string {
 }
 
 /**
+ * Enhanced input validation with security logging
+ */
+export function validateInputWithLogging(
+  input: string, 
+  fieldName: string, 
+  onSecurityIssue?: (issue: string) => void
+): boolean {
+  // Check for dangerous content
+  if (hasDangerousContent(input)) {
+    onSecurityIssue?.(`Dangerous content detected in ${fieldName}: potential XSS attempt`);
+    return false;
+  }
+  
+  // Check for SQL injection patterns
+  const sqlPatterns = [
+    /('|(\\')|(\\"|")|(\\;)|(\||;))/i,
+    /((\%3D)|(=))[^\n]*((\%27)|(')|(\-\-)|(\%3B)|(;))/i,
+    /\w*((\%27)|(')|(\-\-)|(\%3B)|(;))/i,
+    /((\%3C)|<)((\%2F)|\/)*[a-z0-9%]+((\%3E)|>)/i,
+    /((\%3C)|<)[^\n]+((\%3E)|>)/i
+  ];
+  
+  if (sqlPatterns.some(pattern => pattern.test(input))) {
+    onSecurityIssue?.(`SQL injection attempt detected in ${fieldName}`);
+    return false;
+  }
+  
+  return true;
+}
+
+/**
  * Rate limiting for client-side actions
  */
 class ClientRateLimit {

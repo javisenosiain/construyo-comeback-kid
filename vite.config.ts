@@ -27,6 +27,15 @@ export default defineConfig(({ mode }) => ({
         drop_console: true,
         drop_debugger: true
       }
+    },
+    // Security headers for production builds
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          security: ['@/lib/security'],
+          vendor: ['react', 'react-dom']
+        }
+      }
     }
   },
   plugins: [
