@@ -140,6 +140,66 @@ export type Database = {
         }
         Relationships: []
       }
+      booking_link_analytics: {
+        Row: {
+          calendly_event_id: string | null
+          calendly_event_uri: string | null
+          created_at: string
+          event_data: Json | null
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          lead_id: string | null
+          message_log_id: string | null
+          referrer: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          calendly_event_id?: string | null
+          calendly_event_uri?: string | null
+          created_at?: string
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          lead_id?: string | null
+          message_log_id?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          calendly_event_id?: string | null
+          calendly_event_uri?: string | null
+          created_at?: string
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          lead_id?: string | null
+          message_log_id?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_link_analytics_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_link_analytics_message_log_id_fkey"
+            columns: ["message_log_id"]
+            isOneToOne: false
+            referencedRelation: "message_delivery_logs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       builders: {
         Row: {
           bio: string | null
@@ -1317,6 +1377,129 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      message_delivery_logs: {
+        Row: {
+          booking_completed_at: string | null
+          calendly_link: string | null
+          clicked_at: string | null
+          created_at: string
+          delivered_at: string | null
+          delivery_status: string
+          error_message: string | null
+          external_message_id: string | null
+          id: string
+          lead_id: string | null
+          message_content: string
+          message_type: string
+          recipient_email: string | null
+          recipient_phone: string | null
+          retry_count: number | null
+          sent_at: string | null
+          template_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          booking_completed_at?: string | null
+          calendly_link?: string | null
+          clicked_at?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          delivery_status?: string
+          error_message?: string | null
+          external_message_id?: string | null
+          id?: string
+          lead_id?: string | null
+          message_content: string
+          message_type: string
+          recipient_email?: string | null
+          recipient_phone?: string | null
+          retry_count?: number | null
+          sent_at?: string | null
+          template_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          booking_completed_at?: string | null
+          calendly_link?: string | null
+          clicked_at?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          delivery_status?: string
+          error_message?: string | null
+          external_message_id?: string | null
+          id?: string
+          lead_id?: string | null
+          message_content?: string
+          message_type?: string
+          recipient_email?: string | null
+          recipient_phone?: string | null
+          retry_count?: number | null
+          sent_at?: string | null
+          template_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_delivery_logs_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_delivery_logs_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "message_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      message_templates: {
+        Row: {
+          calendly_link_template: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          message_template: string
+          subject_template: string | null
+          template_name: string
+          template_type: string
+          trigger_conditions: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          calendly_link_template?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          message_template: string
+          subject_template?: string | null
+          template_name: string
+          template_type: string
+          trigger_conditions?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          calendly_link_template?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          message_template?: string
+          subject_template?: string | null
+          template_name?: string
+          template_type?: string
+          trigger_conditions?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       microsite_analytics: {
         Row: {

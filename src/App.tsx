@@ -11,6 +11,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Leads from "./pages/Leads";
 import PlanningData from "./pages/PlanningData";
+import AutoResponder from "./pages/AutoResponder";
 import Invoices from "./pages/Invoices";
 import Payments from "./pages/Payments";
 import Reviews from "./pages/Reviews";
@@ -49,6 +50,11 @@ const AppContent = () => {
         <Route path="/planning-data" element={
           <ProtectedRoute>
             <PlanningData />
+          </ProtectedRoute>
+        } />
+        <Route path="/auto-responder" element={
+          <ProtectedRoute>
+            <AutoResponder />
           </ProtectedRoute>
         } />
         <Route path="/invoices" element={
