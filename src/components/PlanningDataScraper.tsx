@@ -50,6 +50,7 @@ export default function PlanningDataScraper() {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<ApiResponse | null>(null);
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
+  const [zapierWebhook, setZapierWebhook] = useState("");
 
   /**
    * Execute planning data search
@@ -67,12 +68,13 @@ export default function PlanningDataScraper() {
     try {
       console.log(`🔍 Searching Planning Data API: ${filterType}=${filterValue}`);
       
-      // Call our edge function
+      // Call our edge function with optional Zapier integration
       const { data, error } = await supabase.functions.invoke('planning-data-scraper', {
         body: {
           filterType,
           filterValue: filterValue.toLowerCase().trim(),
-          limit
+          limit,
+          zapierWebhook: zapierWebhook.trim() || undefined
         }
       });
 
@@ -94,8 +96,9 @@ export default function PlanningDataScraper() {
 
       // Show success message
       const cacheStatus = data.cached ? "from cache" : "fresh data";
+      const zapierStatus = zapierWebhook ? " (sent to Zapier)" : "";
       toast.success(
-        `Found ${data.totalResults} entities ${cacheStatus} in ${duration}ms`
+        `Found ${data.totalResults} entities ${cacheStatus} in ${duration}ms${zapierStatus}`
       );
 
     } catch (error) {
@@ -222,6 +225,21 @@ export default function PlanningDataScraper() {
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+
+              {/* Zapier Integration */}
+              <div>
+                <Label htmlFor="zapierWebhook">Zapier Webhook URL (Optional)</Label>
+                <Input
+                  id="zapierWebhook"
+                  placeholder="https://hooks.zapier.com/hooks/catch/..."
+                  value={zapierWebhook}
+                  onChange={(e) => setZapierWebhook(e.target.value)}
+                  className="mt-1"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Automatically send results to Google Sheets, Excel, or other apps via Zapier
+                </p>
               </div>
 
               <Button 

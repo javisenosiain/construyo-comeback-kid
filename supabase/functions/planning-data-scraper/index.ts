@@ -213,10 +213,16 @@ const parseJsonResponse = async (response: Response): Promise<any> => {
     if (!text.trim()) {
       throw new Error('Empty response body');
     }
+
+    // Check if response is HTML (common 404/error page)
+    if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html')) {
+      throw new Error('Received HTML instead of JSON - likely a 404 or server error');
+    }
     
     return JSON.parse(text);
   } catch (error) {
     console.error('JSON parsing error:', error);
+    console.error('Response text (first 500 chars):', text?.slice(0, 500));
     throw new Error(`Invalid JSON response: ${error.message}`);
   }
 };
