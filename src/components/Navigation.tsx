@@ -14,6 +14,7 @@ const Navigation = () => {
   const navigationItems = [
     { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
     { href: "/leads", label: "Leads", icon: Users },
+    { href: "/crm", label: "CRM", icon: Database },
     { href: "/planning-data", label: "Planning Data", icon: Database },
     { href: "/auto-responder", label: "Auto-Responder", icon: MessageSquare },
     { href: "/microsites", label: "Microsites", icon: Globe },
