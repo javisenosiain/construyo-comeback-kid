@@ -1,4 +1,4 @@
-import AutoResponderSystem from "@/components/AutoResponderSystem";
+import AutoResponderSystem from "../components/AutoResponderSystem";
 
 export default function AutoResponder() {
   return (
