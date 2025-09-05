@@ -353,6 +353,13 @@ export type Database = {
             referencedRelation: "microsites"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "catalogue_analytics_microsite_id_fkey"
+            columns: ["microsite_id"]
+            isOneToOne: false
+            referencedRelation: "microsites_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       catalogue_categories: {
@@ -852,6 +859,13 @@ export type Database = {
             columns: ["microsite_id"]
             isOneToOne: false
             referencedRelation: "microsites"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "form_submissions_microsite_id_fkey"
+            columns: ["microsite_id"]
+            isOneToOne: false
+            referencedRelation: "microsites_public"
             referencedColumns: ["id"]
           },
         ]
@@ -1537,6 +1551,13 @@ export type Database = {
             referencedRelation: "microsites"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "microsite_analytics_microsite_id_fkey"
+            columns: ["microsite_id"]
+            isOneToOne: false
+            referencedRelation: "microsites_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       microsites: {
@@ -1941,6 +1962,13 @@ export type Database = {
             referencedRelation: "microsites"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "quote_requests_microsite_id_fkey"
+            columns: ["microsite_id"]
+            isOneToOne: false
+            referencedRelation: "microsites_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       referral_clicks: {
@@ -2049,6 +2077,13 @@ export type Database = {
             columns: ["target_microsite_id"]
             isOneToOne: false
             referencedRelation: "microsites"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referral_codes_target_microsite_id_fkey"
+            columns: ["target_microsite_id"]
+            isOneToOne: false
+            referencedRelation: "microsites_public"
             referencedColumns: ["id"]
           },
         ]
@@ -2436,7 +2471,33 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      microsites_public: {
+        Row: {
+          client_name: string | null
+          created_at: string | null
+          domain_slug: string | null
+          id: string | null
+          is_active: boolean | null
+          microsite_data: Json | null
+        }
+        Insert: {
+          client_name?: string | null
+          created_at?: string | null
+          domain_slug?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          microsite_data?: never
+        }
+        Update: {
+          client_name?: string | null
+          created_at?: string | null
+          domain_slug?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          microsite_data?: never
+        }
+        Relationships: []
+      }
     }
     Functions: {
       check_auth_rate_limit: {
@@ -2471,6 +2532,17 @@ export type Database = {
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_microsite_public_data: {
+        Args: { microsite_slug: string }
+        Returns: {
+          client_name: string
+          created_at: string
+          domain_slug: string
+          id: string
+          is_active: boolean
+          safe_microsite_data: Json
+        }[]
       }
       log_enhanced_security_event: {
         Args: {
