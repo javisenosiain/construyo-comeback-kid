@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Building2, Menu, X, Users, FileText, CreditCard, Star, Share2, Settings, BarChart3, LogOut, User, Database, Globe, MessageSquare } from "lucide-react";
+import { Building2, Menu, X, Users, FileText, CreditCard, Star, Share2, Settings, BarChart3, LogOut, User, Database, Globe, MessageSquare, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -15,6 +15,7 @@ const Navigation = () => {
     { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
     { href: "/leads", label: "Leads", icon: Users },
     { href: "/crm", label: "CRM", icon: Database },
+    { href: "/calendly", label: "Calendly", icon: Calendar },
     { href: "/planning-data", label: "Planning Data", icon: Database },
     { href: "/auto-responder", label: "Auto-Responder", icon: MessageSquare },
     { href: "/microsites", label: "Microsites", icon: Globe },
