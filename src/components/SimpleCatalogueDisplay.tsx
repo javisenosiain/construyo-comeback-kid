@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
-import { Calendar, Clock, Tag, DollarSign } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { ExternalLink, Eye, Globe, Calendar, Clock, Tag, DollarSign } from "lucide-react";
 
 // Sample catalogue data for demonstration
 const SAMPLE_CATALOGUE = [
@@ -58,9 +59,19 @@ const SAMPLE_CATALOGUE = [
   }
 ];
 
+interface MicrositeData {
+  id: string;
+  client_name: string;
+  domain_slug: string;
+  safe_microsite_data: any;
+  is_active: boolean;
+  created_at: string;
+}
+
 interface SimpleCatalogueDisplayProps {
-  userId: string;
+  userId?: string;
   micrositeId?: string;
+  micrositeSlug?: string;
   calendlyUrl?: string;
   showQuoteForm?: boolean;
   className?: string;
@@ -71,12 +82,16 @@ interface SimpleCatalogueDisplayProps {
 export const SimpleCatalogueDisplay: React.FC<SimpleCatalogueDisplayProps> = ({
   userId,
   micrositeId,
+  micrositeSlug,
   calendlyUrl,
   showQuoteForm = true,
   className = "",
   maxItems,
   featuredOnly = false
 }) => {
+  const [microsite, setMicrosite] = useState<MicrositeData | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [quoteFormData, setQuoteFormData] = useState({
     customer_name: '',
@@ -88,6 +103,54 @@ export const SimpleCatalogueDisplay: React.FC<SimpleCatalogueDisplayProps> = ({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (micrositeSlug) {
+      fetchSecureMicrositeData();
+    }
+  }, [micrositeSlug]);
+
+  /**
+   * SECURITY UPDATE: Use secure edge function instead of direct table access
+   * This prevents exposure of sensitive customer data
+   */
+  const fetchSecureMicrositeData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      console.log(`🔒 Fetching secure microsite data for slug: ${micrositeSlug}`);
+      
+      // Use the secure edge function that filters sensitive data
+      const { data, error } = await supabase.functions.invoke('microsite-safe-access', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ slug: micrositeSlug })
+      });
+
+      if (error) {
+        console.error('Error fetching secure microsite data:', error);
+        setError('Failed to load microsite data');
+        return;
+      }
+
+      if (!data?.success || !data?.data) {
+        setError('Microsite not found or inactive');
+        return;
+      }
+
+      setMicrosite(data.data);
+      console.log('✅ Secure microsite data loaded successfully');
+      
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      setError('An unexpected error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Filter and limit items based on props
   let items = SAMPLE_CATALOGUE;
@@ -140,8 +203,9 @@ export const SimpleCatalogueDisplay: React.FC<SimpleCatalogueDisplayProps> = ({
       setSelectedItem(null);
 
       // Open Calendly if URL provided
-      if (calendlyUrl) {
-        window.open(calendlyUrl, '_blank');
+      const finalCalendlyUrl = calendlyUrl || microsite?.safe_microsite_data?.calendlyUrl;
+      if (finalCalendlyUrl) {
+        window.open(finalCalendlyUrl, '_blank');
       }
     } catch (error) {
       console.error('Error submitting quote request:', error);
@@ -155,7 +219,124 @@ export const SimpleCatalogueDisplay: React.FC<SimpleCatalogueDisplayProps> = ({
     }
   };
 
+  // Show microsite info if loading or if we have microsite data
+  if (micrositeSlug) {
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center p-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <Card className="m-4">
+          <CardContent className="p-6">
+            <div className="text-center">
+              <Globe className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Unable to Load Microsite</h3>
+              <p className="text-muted-foreground">{error}</p>
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    if (microsite) {
+      const micrositeData = microsite.safe_microsite_data || {};
+      
+      return (
+        <div className="container mx-auto p-4 max-w-4xl">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Globe className="h-5 w-5" />
+                    {micrositeData.clientName || microsite.client_name}
+                  </CardTitle>
+                  <CardDescription>
+                    {micrositeData.description || 'Professional construction services'}
+                  </CardDescription>
+                </div>
+                <Badge variant="secondary">
+                  Active & Secure
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Services */}
+              {micrositeData.services && micrositeData.services.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Our Services</h3>
+                  <div className="grid gap-2 md:grid-cols-2">
+                    {micrositeData.services.map((service: string, index: number) => (
+                      <Badge key={index} variant="outline" className="justify-start p-2">
+                        {service}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Portfolio Settings */}
+              {micrositeData.portfolioSettings && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Portfolio</h3>
+                  <div className="space-y-2">
+                    {micrositeData.portfolioSettings.showReviews && (
+                      <p className="text-sm text-muted-foreground">
+                        ✓ Customer reviews displayed
+                      </p>
+                    )}
+                    {micrositeData.portfolioSettings.maxItems && (
+                      <p className="text-sm text-muted-foreground">
+                        Showcasing up to {micrositeData.portfolioSettings.maxItems} projects
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="flex gap-3 pt-4">
+                <Button 
+                  onClick={() => window.open(`/microsite/${microsite.domain_slug}`, '_blank')}
+                  className="flex items-center gap-2"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  View Live Site
+                </Button>
+                
+                {(calendlyUrl || micrositeData.calendlyUrl) && (
+                  <Button 
+                    variant="outline"
+                    onClick={() => window.open(calendlyUrl || micrositeData.calendlyUrl, '_blank')}
+                    className="flex items-center gap-2"
+                  >
+                    <Eye className="h-4 w-4" />
+                    Book Consultation
+                  </Button>
+                )}
+              </div>
+
+              {/* Meta Information */}
+              <div className="pt-4 border-t text-sm text-muted-foreground">
+                <p>Created: {new Date(microsite.created_at).toLocaleDateString()}</p>
+                <p>Domain: {microsite.domain_slug}</p>
+                <p className="text-green-600">🔒 Secure: Sensitive data protected</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+  }
+
+  // Default catalogue display
   const featuredItems = items.filter(item => item.is_featured);
+  const finalCalendlyUrl = calendlyUrl || microsite?.safe_microsite_data?.calendlyUrl;
 
   return (
     <div className={`space-y-8 ${className}`}>
@@ -358,10 +539,10 @@ export const SimpleCatalogueDisplay: React.FC<SimpleCatalogueDisplayProps> = ({
                 >
                   {isSubmitting ? "Submitting..." : "Request Quote"}
                 </Button>
-                {calendlyUrl && (
+                {finalCalendlyUrl && (
                   <Button
                     variant="outline"
-                    onClick={() => window.open(calendlyUrl, '_blank')}
+                    onClick={() => window.open(finalCalendlyUrl, '_blank')}
                     className="flex items-center gap-2"
                   >
                     <Calendar className="w-4 h-4" />
