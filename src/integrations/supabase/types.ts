@@ -870,6 +870,44 @@ export type Database = {
           },
         ]
       }
+      invoice_analytics: {
+        Row: {
+          created_at: string | null
+          event_data: Json | null
+          event_type: string
+          id: string
+          invoice_id: string | null
+          payment_provider: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          invoice_id?: string | null
+          payment_provider?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          invoice_id?: string | null
+          payment_provider?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_analytics_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "construyo_invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoices: {
         Row: {
           amount: number
@@ -1607,6 +1645,45 @@ export type Database = {
           },
         ]
       }
+      payment_provider_settings: {
+        Row: {
+          created_at: string | null
+          encrypted_credentials: string | null
+          id: string
+          is_active: boolean | null
+          provider_type: string
+          sync_enabled: boolean | null
+          updated_at: string | null
+          user_id: string
+          webhook_url: string | null
+          zapier_webhook: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          encrypted_credentials?: string | null
+          id?: string
+          is_active?: boolean | null
+          provider_type: string
+          sync_enabled?: boolean | null
+          updated_at?: string | null
+          user_id: string
+          webhook_url?: string | null
+          zapier_webhook?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          encrypted_credentials?: string | null
+          id?: string
+          is_active?: boolean | null
+          provider_type?: string
+          sync_enabled?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+          webhook_url?: string | null
+          zapier_webhook?: string | null
+        }
+        Relationships: []
+      }
       payments: {
         Row: {
           amount: number
@@ -1720,6 +1797,45 @@ export type Database = {
           project_type?: string | null
           title?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      pricing_rules: {
+        Row: {
+          base_price: number
+          created_at: string | null
+          currency: string | null
+          id: string
+          is_active: boolean | null
+          price_per_unit: number | null
+          project_type: string
+          unit_type: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          base_price: number
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          is_active?: boolean | null
+          price_per_unit?: number | null
+          project_type: string
+          unit_type?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          base_price?: number
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          is_active?: boolean | null
+          price_per_unit?: number | null
+          project_type?: string
+          unit_type?: string | null
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []
