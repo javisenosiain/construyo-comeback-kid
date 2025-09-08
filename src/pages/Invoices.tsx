@@ -3,11 +3,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PaymentProviderSettings from "@/components/PaymentProviderSettings";
 import PricingRulesManager from "@/components/PricingRulesManager";
+import { PaymentLinkManager } from "@/components/PaymentLinkManager";
 import { Plus, FileText, Send, Eye, Settings, Calculator, Zap, DollarSign, Clock, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
@@ -43,6 +45,8 @@ const Invoices = () => {
   const [selectedLead, setSelectedLead] = useState<string>("");
   const [customAmount, setCustomAmount] = useState<string>("");
   const [selectedProvider, setSelectedProvider] = useState<string>("stripe");
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -50,7 +54,7 @@ const Invoices = () => {
       fetchInvoices();
       fetchLeads();
     }
-  }, [user]);
+  }, [user, refreshTrigger]);
 
   const fetchInvoices = async () => {
     try {
@@ -327,6 +331,32 @@ const Invoices = () => {
                             <Eye className="w-4 h-4 mr-2" />
                             View
                           </Button>
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => setSelectedInvoice(invoice)}
+                              >
+                                <DollarSign className="w-4 h-4 mr-2" />
+                                Manage Payment
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-2xl">
+                              <DialogHeader>
+                                <DialogTitle>Payment Link Manager</DialogTitle>
+                                <DialogDescription>
+                                  Generate and share secure payment links with your customers
+                                </DialogDescription>
+                              </DialogHeader>
+                              {selectedInvoice && (
+                                <PaymentLinkManager 
+                                  invoice={selectedInvoice}
+                                  onStatusUpdate={() => setRefreshTrigger(prev => prev + 1)}
+                                />
+                              )}
+                            </DialogContent>
+                          </Dialog>
                           {invoice.status === "draft" ? (
                             <Button size="sm">
                               <Send className="w-4 h-4 mr-2" />
