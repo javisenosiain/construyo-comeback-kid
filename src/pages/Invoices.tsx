@@ -10,6 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PaymentProviderSettings from "@/components/PaymentProviderSettings";
 import PricingRulesManager from "@/components/PricingRulesManager";
 import { PaymentLinkManager } from "@/components/PaymentLinkManager";
+import DiscountRulesManager from "@/components/DiscountRulesManager";
+import DiscountAutomationManager from "@/components/DiscountAutomationManager";
 import { Plus, FileText, Send, Eye, Settings, Calculator, Zap, DollarSign, Clock, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
@@ -179,7 +181,7 @@ const Invoices = () => {
         </div>
 
         <Tabs defaultValue="invoices" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="invoices" className="flex items-center gap-2">
               <FileText className="w-4 h-4" />
               Invoices
@@ -195,6 +197,14 @@ const Invoices = () => {
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="w-4 h-4" />
               Payment Settings
+            </TabsTrigger>
+            <TabsTrigger value="discounts" className="flex items-center gap-2">
+              <DollarSign className="w-4 h-4" />
+              Discounts
+            </TabsTrigger>
+            <TabsTrigger value="automation" className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4" />
+              Automation
             </TabsTrigger>
           </TabsList>
 
@@ -508,6 +518,14 @@ const Invoices = () => {
 
           <TabsContent value="settings">
             <PaymentProviderSettings />
+          </TabsContent>
+
+          <TabsContent value="discounts">
+            <DiscountRulesManager />
+          </TabsContent>
+
+          <TabsContent value="automation">
+            <DiscountAutomationManager />
           </TabsContent>
         </Tabs>
       </div>

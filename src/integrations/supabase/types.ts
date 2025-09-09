@@ -748,6 +748,113 @@ export type Database = {
           },
         ]
       }
+      discount_applications: {
+        Row: {
+          applied_at: string
+          client_notified_at: string | null
+          client_response: Json | null
+          created_at: string
+          discount_amount: number
+          discount_rule_id: string
+          final_amount: number
+          id: string
+          invoice_id: string
+          notification_channel: string | null
+          notification_status: string | null
+          original_amount: number
+          user_id: string
+        }
+        Insert: {
+          applied_at?: string
+          client_notified_at?: string | null
+          client_response?: Json | null
+          created_at?: string
+          discount_amount: number
+          discount_rule_id: string
+          final_amount: number
+          id?: string
+          invoice_id: string
+          notification_channel?: string | null
+          notification_status?: string | null
+          original_amount: number
+          user_id: string
+        }
+        Update: {
+          applied_at?: string
+          client_notified_at?: string | null
+          client_response?: Json | null
+          created_at?: string
+          discount_amount?: number
+          discount_rule_id?: string
+          final_amount?: number
+          id?: string
+          invoice_id?: string
+          notification_channel?: string | null
+          notification_status?: string | null
+          original_amount?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discount_applications_discount_rule_id_fkey"
+            columns: ["discount_rule_id"]
+            isOneToOne: false
+            referencedRelation: "discount_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      discount_rules: {
+        Row: {
+          conditions: Json
+          created_at: string
+          discount_type: string
+          discount_value: number
+          id: string
+          is_active: boolean
+          max_usage: number | null
+          rule_name: string
+          rule_type: string
+          updated_at: string
+          usage_count: number | null
+          user_id: string
+          valid_from: string | null
+          valid_until: string | null
+        }
+        Insert: {
+          conditions?: Json
+          created_at?: string
+          discount_type: string
+          discount_value: number
+          id?: string
+          is_active?: boolean
+          max_usage?: number | null
+          rule_name: string
+          rule_type: string
+          updated_at?: string
+          usage_count?: number | null
+          user_id: string
+          valid_from?: string | null
+          valid_until?: string | null
+        }
+        Update: {
+          conditions?: Json
+          created_at?: string
+          discount_type?: string
+          discount_value?: number
+          id?: string
+          is_active?: boolean
+          max_usage?: number | null
+          rule_name?: string
+          rule_type?: string
+          updated_at?: string
+          usage_count?: number | null
+          user_id?: string
+          valid_from?: string | null
+          valid_until?: string | null
+        }
+        Relationships: []
+      }
       external_reviews: {
         Row: {
           id: string
