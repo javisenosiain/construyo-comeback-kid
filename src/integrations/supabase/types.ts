@@ -894,6 +894,202 @@ export type Database = {
         }
         Relationships: []
       }
+      feedback_delivery_logs: {
+        Row: {
+          created_at: string
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string | null
+          delivered_at: string | null
+          delivery_method: string
+          delivery_status: string
+          error_message: string | null
+          expires_at: string
+          external_message_id: string | null
+          form_id: string
+          id: string
+          project_id: string
+          responded_at: string | null
+          response_token: string | null
+          sent_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          customer_email?: string | null
+          customer_name: string
+          customer_phone?: string | null
+          delivered_at?: string | null
+          delivery_method: string
+          delivery_status?: string
+          error_message?: string | null
+          expires_at?: string
+          external_message_id?: string | null
+          form_id: string
+          id?: string
+          project_id: string
+          responded_at?: string | null
+          response_token?: string | null
+          sent_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string | null
+          delivered_at?: string | null
+          delivery_method?: string
+          delivery_status?: string
+          error_message?: string | null
+          expires_at?: string
+          external_message_id?: string | null
+          form_id?: string
+          id?: string
+          project_id?: string
+          responded_at?: string | null
+          response_token?: string | null
+          sent_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_delivery_logs_form_id_fkey"
+            columns: ["form_id"]
+            isOneToOne: false
+            referencedRelation: "feedback_forms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feedback_forms: {
+        Row: {
+          comments_label: string | null
+          created_at: string
+          form_description: string | null
+          form_name: string
+          form_title: string
+          gdpr_consent_required: boolean | null
+          gdpr_consent_text: string | null
+          google_sheets_sync: boolean | null
+          id: string
+          is_active: boolean
+          rating_label: string | null
+          thank_you_message: string | null
+          updated_at: string
+          user_id: string
+          zapier_webhook: string | null
+        }
+        Insert: {
+          comments_label?: string | null
+          created_at?: string
+          form_description?: string | null
+          form_name: string
+          form_title?: string
+          gdpr_consent_required?: boolean | null
+          gdpr_consent_text?: string | null
+          google_sheets_sync?: boolean | null
+          id?: string
+          is_active?: boolean
+          rating_label?: string | null
+          thank_you_message?: string | null
+          updated_at?: string
+          user_id: string
+          zapier_webhook?: string | null
+        }
+        Update: {
+          comments_label?: string | null
+          created_at?: string
+          form_description?: string | null
+          form_name?: string
+          form_title?: string
+          gdpr_consent_required?: boolean | null
+          gdpr_consent_text?: string | null
+          google_sheets_sync?: boolean | null
+          id?: string
+          is_active?: boolean
+          rating_label?: string | null
+          thank_you_message?: string | null
+          updated_at?: string
+          user_id?: string
+          zapier_webhook?: string | null
+        }
+        Relationships: []
+      }
+      feedback_responses: {
+        Row: {
+          comments: string | null
+          created_at: string
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string | null
+          expires_at: string | null
+          form_id: string
+          gdpr_consent: boolean
+          id: string
+          project_id: string
+          rating: number
+          response_token: string | null
+          submission_ip: unknown | null
+          submission_user_agent: string | null
+          submitted_at: string
+          user_id: string
+          zapier_sync_error: string | null
+          zapier_synced: boolean | null
+        }
+        Insert: {
+          comments?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name: string
+          customer_phone?: string | null
+          expires_at?: string | null
+          form_id: string
+          gdpr_consent?: boolean
+          id?: string
+          project_id: string
+          rating: number
+          response_token?: string | null
+          submission_ip?: unknown | null
+          submission_user_agent?: string | null
+          submitted_at?: string
+          user_id: string
+          zapier_sync_error?: string | null
+          zapier_synced?: boolean | null
+        }
+        Update: {
+          comments?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string | null
+          expires_at?: string | null
+          form_id?: string
+          gdpr_consent?: boolean
+          id?: string
+          project_id?: string
+          rating?: number
+          response_token?: string | null
+          submission_ip?: unknown | null
+          submission_user_agent?: string | null
+          submitted_at?: string
+          user_id?: string
+          zapier_sync_error?: string | null
+          zapier_synced?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_responses_form_id_fkey"
+            columns: ["form_id"]
+            isOneToOne: false
+            referencedRelation: "feedback_forms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       form_submissions: {
         Row: {
           created_at: string
@@ -2742,6 +2938,10 @@ export type Database = {
       }
       encrypt_sensitive_data: {
         Args: { data: string }
+        Returns: string
+      }
+      generate_feedback_token: {
+        Args: Record<PropertyKey, never>
         Returns: string
       }
       generate_invoice_number: {

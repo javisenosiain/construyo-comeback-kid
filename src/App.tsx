@@ -20,6 +20,7 @@ import Reviews from "./pages/Reviews";
 import SocialMedia from "./pages/SocialMedia";
 import Settings from "./pages/Settings";
 import Microsites from "./pages/Microsites";
+import FeedbackFormPage from "./pages/FeedbackForm";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,10 +29,11 @@ const AppContent = () => {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
   const isAuthPage = location.pathname === "/auth";
+  const isFeedbackPage = location.pathname.startsWith("/feedback/");
 
   return (
     <>
-      {!isHomePage && !isAuthPage && (
+      {!isHomePage && !isAuthPage && !isFeedbackPage && (
         <ProtectedRoute>
           <Navigation />
         </ProtectedRoute>
@@ -87,6 +89,7 @@ const AppContent = () => {
             <Microsites />
           </ProtectedRoute>
         } />
+        <Route path="/feedback/:token" element={<FeedbackFormPage />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

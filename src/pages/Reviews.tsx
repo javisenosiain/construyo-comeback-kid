@@ -1,7 +1,9 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Star, Send, ExternalLink, MessageSquare } from "lucide-react";
+import { Star, Send, ExternalLink, MessageSquare, FileText } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import FeedbackFormManager from "@/components/FeedbackFormManager";
 
 const Reviews = () => {
   const reviews = [
@@ -86,6 +88,17 @@ const Reviews = () => {
             Request Review
           </Button>
         </div>
+
+        <Tabs defaultValue="reviews" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="reviews">Reviews</TabsTrigger>
+            <TabsTrigger value="feedback-forms">
+              <FileText className="w-4 h-4 mr-2" />
+              Feedback Forms
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="reviews">{/* Review content */}
 
         {/* Stats */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">
@@ -255,6 +268,12 @@ const Reviews = () => {
             </Card>
           </div>
         </div>
+          </TabsContent>
+
+          <TabsContent value="feedback-forms">
+            <FeedbackFormManager />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
