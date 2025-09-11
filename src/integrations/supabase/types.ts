@@ -1019,6 +1019,66 @@ export type Database = {
         }
         Relationships: []
       }
+      feedback_resolutions: {
+        Row: {
+          created_at: string
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string | null
+          delivery_method: string
+          external_message_id: string | null
+          feedback_response_id: string
+          id: string
+          initiated_at: string
+          project_id: string
+          resolution_notes: string | null
+          resolution_status: string
+          resolution_token: string | null
+          resolved_at: string | null
+          token_expires_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          customer_email?: string | null
+          customer_name: string
+          customer_phone?: string | null
+          delivery_method: string
+          external_message_id?: string | null
+          feedback_response_id: string
+          id?: string
+          initiated_at?: string
+          project_id: string
+          resolution_notes?: string | null
+          resolution_status?: string
+          resolution_token?: string | null
+          resolved_at?: string | null
+          token_expires_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string | null
+          delivery_method?: string
+          external_message_id?: string | null
+          feedback_response_id?: string
+          id?: string
+          initiated_at?: string
+          project_id?: string
+          resolution_notes?: string | null
+          resolution_status?: string
+          resolution_token?: string | null
+          resolved_at?: string | null
+          token_expires_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       feedback_responses: {
         Row: {
           comments: string | null
@@ -2949,6 +3009,10 @@ export type Database = {
         Returns: string
       }
       generate_referral_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_resolution_token: {
         Args: Record<PropertyKey, never>
         Returns: string
       }

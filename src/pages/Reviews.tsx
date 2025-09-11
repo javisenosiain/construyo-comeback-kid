@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Star, Send, ExternalLink, MessageSquare, FileText } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FeedbackFormManager from "@/components/FeedbackFormManager";
+import NegativeFeedbackDiversion from "@/components/NegativeFeedbackDiversion";
 
 const Reviews = () => {
   const reviews = [
@@ -90,12 +91,13 @@ const Reviews = () => {
         </div>
 
         <Tabs defaultValue="reviews" className="space-y-6">
-          <TabsList>
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="reviews">Reviews</TabsTrigger>
             <TabsTrigger value="feedback-forms">
               <FileText className="w-4 h-4 mr-2" />
               Feedback Forms
             </TabsTrigger>
+            <TabsTrigger value="negative-diversion">Negative Diversion</TabsTrigger>
           </TabsList>
 
           <TabsContent value="reviews">{/* Review content */}
@@ -272,6 +274,10 @@ const Reviews = () => {
 
           <TabsContent value="feedback-forms">
             <FeedbackFormManager />
+          </TabsContent>
+
+          <TabsContent value="negative-diversion">
+            <NegativeFeedbackDiversion />
           </TabsContent>
         </Tabs>
       </div>

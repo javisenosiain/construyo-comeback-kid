@@ -21,6 +21,7 @@ import SocialMedia from "./pages/SocialMedia";
 import Settings from "./pages/Settings";
 import Microsites from "./pages/Microsites";
 import FeedbackFormPage from "./pages/FeedbackForm";
+import Resolution from "./pages/Resolution";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,10 +31,11 @@ const AppContent = () => {
   const isHomePage = location.pathname === "/";
   const isAuthPage = location.pathname === "/auth";
   const isFeedbackPage = location.pathname.startsWith("/feedback/");
+  const isResolutionPage = location.pathname.startsWith("/resolution/");
 
   return (
     <>
-      {!isHomePage && !isAuthPage && !isFeedbackPage && (
+      {!isHomePage && !isAuthPage && !isFeedbackPage && !isResolutionPage && (
         <ProtectedRoute>
           <Navigation />
         </ProtectedRoute>
@@ -90,6 +92,7 @@ const AppContent = () => {
           </ProtectedRoute>
         } />
         <Route path="/feedback/:token" element={<FeedbackFormPage />} />
+        <Route path="/resolution/:token" element={<Resolution />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
