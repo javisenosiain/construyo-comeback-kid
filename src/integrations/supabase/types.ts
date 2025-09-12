@@ -1233,6 +1233,42 @@ export type Database = {
           },
         ]
       }
+      gallery_analytics: {
+        Row: {
+          created_at: string
+          event_data: Json | null
+          event_type: string
+          gallery_id: string
+          id: string
+          ip_address: unknown | null
+          referrer: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_data?: Json | null
+          event_type: string
+          gallery_id: string
+          id?: string
+          ip_address?: unknown | null
+          referrer?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_data?: Json | null
+          event_type?: string
+          gallery_id?: string
+          id?: string
+          ip_address?: unknown | null
+          referrer?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       invoice_analytics: {
         Row: {
           created_at: string | null
@@ -2266,6 +2302,69 @@ export type Database = {
           specialties?: string[] | null
           website?: string | null
           years_experience?: number | null
+        }
+        Relationships: []
+      }
+      project_galleries: {
+        Row: {
+          ai_provider: string | null
+          completed_at: string | null
+          created_at: string
+          description: string | null
+          error_message: string | null
+          gallery_type: string
+          gallery_url: string | null
+          generation_config: Json | null
+          generation_status: string
+          id: string
+          media_count: number
+          processing_time_seconds: number | null
+          project_id: string
+          storage_path: string | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_provider?: string | null
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          error_message?: string | null
+          gallery_type?: string
+          gallery_url?: string | null
+          generation_config?: Json | null
+          generation_status?: string
+          id?: string
+          media_count?: number
+          processing_time_seconds?: number | null
+          project_id: string
+          storage_path?: string | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_provider?: string | null
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          error_message?: string | null
+          gallery_type?: string
+          gallery_url?: string | null
+          generation_config?: Json | null
+          generation_status?: string
+          id?: string
+          media_count?: number
+          processing_time_seconds?: number | null
+          project_id?: string
+          storage_path?: string | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
