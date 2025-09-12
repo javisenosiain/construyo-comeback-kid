@@ -22,6 +22,7 @@ import Settings from "./pages/Settings";
 import Microsites from "./pages/Microsites";
 import FeedbackFormPage from "./pages/FeedbackForm";
 import Resolution from "./pages/Resolution";
+import GalleryGenerator from "./components/GalleryGenerator";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -93,6 +94,7 @@ const AppContent = () => {
         } />
         <Route path="/feedback/:token" element={<FeedbackFormPage />} />
         <Route path="/resolution/:token" element={<Resolution />} />
+        <Route path="/portfolio" element={<ProtectedRoute><GalleryGenerator /></ProtectedRoute>} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Building2, Menu, X, Users, FileText, CreditCard, Star, Share2, Settings, BarChart3, LogOut, User, Database, Globe, MessageSquare, Calendar } from "lucide-react";
+import { Building2, Menu, X, Users, FileText, CreditCard, Star, Share2, Settings, BarChart3, LogOut, User, Database, Globe, MessageSquare, Calendar, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -22,6 +22,7 @@ const Navigation = () => {
     { href: "/invoices", label: "Invoices", icon: FileText },
     { href: "/payments", label: "Payments", icon: CreditCard },
     { href: "/reviews", label: "Reviews", icon: Star },
+    { href: "/portfolio", label: "Portfolio", icon: Image },
     { href: "/social", label: "Social Media", icon: Share2 },
     { href: "/settings", label: "Settings", icon: Settings },
   ];
