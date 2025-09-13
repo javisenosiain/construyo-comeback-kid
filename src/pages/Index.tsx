@@ -1,7 +1,10 @@
-import { Building2, Users, FileText, CreditCard, Star, Share2 } from "lucide-react";
+import { Building2, Users, FileText, CreditCard, Star, Share2, Image, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "react-router-dom";
+import SocialMedia from "./SocialMedia";
+import GalleryGenerator from "@/components/GalleryGenerator";
 
 const Index = () => {
   const mvpFeatures = [
@@ -97,6 +100,45 @@ const Index = () => {
               </Card>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Social Media & Portfolio Integration */}
+      <section className="py-24 px-6 bg-secondary">
+        <div className="container mx-auto max-w-7xl">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">
+              Showcase Your Work & Build Your Brand
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Automatically generate stunning portfolios and schedule social media posts to showcase your completed projects
+            </p>
+          </div>
+
+          <Tabs defaultValue="social" className="w-full">
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2">
+              <TabsTrigger value="social" className="flex items-center gap-2">
+                <Share2 className="w-4 h-4" />
+                Social Media
+              </TabsTrigger>
+              <TabsTrigger value="portfolio" className="flex items-center gap-2">
+                <Image className="w-4 h-4" />
+                Portfolio
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="social" className="mt-8">
+              <div className="bg-background rounded-lg">
+                <SocialMedia />
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="portfolio" className="mt-8">
+              <div className="bg-background rounded-lg">
+                <GalleryGenerator />
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </section>
 
