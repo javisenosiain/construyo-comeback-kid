@@ -2836,6 +2836,113 @@ export type Database = {
         }
         Relationships: []
       }
+      social_media_analytics: {
+        Row: {
+          created_at: string
+          event_data: Json | null
+          event_type: string
+          id: string
+          platform: string
+          post_id: string | null
+          recorded_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          platform: string
+          post_id?: string | null
+          recorded_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          platform?: string
+          post_id?: string | null
+          recorded_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      social_media_posts: {
+        Row: {
+          buffer_post_id: string | null
+          canva_design_id: string | null
+          caption: string | null
+          content_type: string
+          created_at: string
+          engagement_metrics: Json | null
+          error_message: string | null
+          gallery_id: string | null
+          hashtags: string[] | null
+          id: string
+          media_urls: string[] | null
+          platform: string
+          posted_at: string | null
+          project_id: string | null
+          scheduled_for: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          zapier_workflow_id: string | null
+        }
+        Insert: {
+          buffer_post_id?: string | null
+          canva_design_id?: string | null
+          caption?: string | null
+          content_type: string
+          created_at?: string
+          engagement_metrics?: Json | null
+          error_message?: string | null
+          gallery_id?: string | null
+          hashtags?: string[] | null
+          id?: string
+          media_urls?: string[] | null
+          platform: string
+          posted_at?: string | null
+          project_id?: string | null
+          scheduled_for?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          zapier_workflow_id?: string | null
+        }
+        Update: {
+          buffer_post_id?: string | null
+          canva_design_id?: string | null
+          caption?: string | null
+          content_type?: string
+          created_at?: string
+          engagement_metrics?: Json | null
+          error_message?: string | null
+          gallery_id?: string | null
+          hashtags?: string[] | null
+          id?: string
+          media_urls?: string[] | null
+          platform?: string
+          posted_at?: string | null
+          project_id?: string | null
+          scheduled_for?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          zapier_workflow_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_social_media_posts_gallery_id"
+            columns: ["gallery_id"]
+            isOneToOne: false
+            referencedRelation: "project_galleries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       social_posts: {
         Row: {
           content: string | null
