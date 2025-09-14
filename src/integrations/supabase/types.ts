@@ -3333,6 +3333,14 @@ export type Database = {
           safe_microsite_data: Json
         }[]
       }
+      get_user_lead_stats: {
+        Args: { user_uuid?: string }
+        Returns: {
+          leads_by_priority: Json
+          leads_by_status: Json
+          total_leads: number
+        }[]
+      }
       log_enhanced_security_event: {
         Args: {
           p_event_data?: Json
