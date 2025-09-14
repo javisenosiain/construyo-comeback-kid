@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SocialMediaScheduler from "@/components/SocialMediaScheduler";
+import VideoGenerator from "@/components/VideoGenerator";
 import { 
   Instagram, 
   Facebook, 
@@ -143,11 +144,15 @@ const SocialMedia = () => {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="posts" className="w-full">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsList className="grid w-full max-w-lg grid-cols-3">
             <TabsTrigger value="posts">Recent Posts</TabsTrigger>
             <TabsTrigger value="scheduler">
               <Send className="w-4 h-4 mr-2" />
               Post Scheduler
+            </TabsTrigger>
+            <TabsTrigger value="videos">
+              <Video className="w-4 h-4 mr-2" />
+              AI Videos
             </TabsTrigger>
           </TabsList>
 
@@ -327,6 +332,15 @@ const SocialMedia = () => {
               projectId="proj123"
               onPostScheduled={(postId) => {
                 console.log('Post scheduled:', postId);
+              }}
+            />
+          </TabsContent>
+
+          <TabsContent value="videos" className="mt-6">
+            <VideoGenerator 
+              projectId="proj456"
+              onVideoGenerated={(videoId) => {
+                console.log('Video generated:', videoId);
               }}
             />
           </TabsContent>

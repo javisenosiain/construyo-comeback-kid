@@ -3059,6 +3059,102 @@ export type Database = {
         }
         Relationships: []
       }
+      video_analytics: {
+        Row: {
+          created_at: string
+          event_data: Json | null
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          referrer: string | null
+          user_agent: string | null
+          user_id: string
+          video_generation_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          referrer?: string | null
+          user_agent?: string | null
+          user_id: string
+          video_generation_id: string
+        }
+        Update: {
+          created_at?: string
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          referrer?: string | null
+          user_agent?: string | null
+          user_id?: string
+          video_generation_id?: string
+        }
+        Relationships: []
+      }
+      video_generations: {
+        Row: {
+          after_image_url: string | null
+          before_image_url: string | null
+          completed_at: string | null
+          created_at: string
+          duration: number | null
+          error_message: string | null
+          id: string
+          metadata: Json | null
+          project_id: string
+          runwayml_task_id: string | null
+          status: string
+          testimonial_text: string | null
+          thumbnail_url: string | null
+          updated_at: string
+          user_id: string
+          video_type: string
+          video_url: string | null
+        }
+        Insert: {
+          after_image_url?: string | null
+          before_image_url?: string | null
+          completed_at?: string | null
+          created_at?: string
+          duration?: number | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          project_id: string
+          runwayml_task_id?: string | null
+          status?: string
+          testimonial_text?: string | null
+          thumbnail_url?: string | null
+          updated_at?: string
+          user_id: string
+          video_type?: string
+          video_url?: string | null
+        }
+        Update: {
+          after_image_url?: string | null
+          before_image_url?: string | null
+          completed_at?: string | null
+          created_at?: string
+          duration?: number | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          project_id?: string
+          runwayml_task_id?: string | null
+          status?: string
+          testimonial_text?: string | null
+          thumbnail_url?: string | null
+          updated_at?: string
+          user_id?: string
+          video_type?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
       whatsapp_contacts: {
         Row: {
           created_at: string
