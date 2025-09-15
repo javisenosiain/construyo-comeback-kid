@@ -334,10 +334,10 @@ async function serveMicrosite(supabase: any, slug: string) {
 }
 
 /**
- * Generate the complete HTML for a microsite with portfolio support
+ * Generate the complete HTML for a microsite with portfolio and catalogue support
  */
 async function generateMicrositeHTML(data: any, supabase: any): Promise<string> {
-  const { clientName, services = [], contact, logoUrl, styling, description, showPortfolio, portfolioSettings } = data;
+  const { clientName, services = [], contact, logoUrl, styling, description, showPortfolio, portfolioSettings, showCatalogue = true } = data;
   const primaryColor = styling.primaryColor || '#2563eb';
   
   // Fetch portfolio data if portfolio is enabled
@@ -373,6 +373,38 @@ async function generateMicrositeHTML(data: any, supabase: any): Promise<string> 
       }
     } catch (error) {
       console.error('Error fetching portfolio data:', error);
+    }
+  }
+
+  // Fetch catalogue data if catalogue is enabled
+  let catalogueHTML = '';
+  if (showCatalogue && data.userId) {
+    try {
+      console.log('📦 Fetching catalogue data for microsite...');
+      
+      // Get catalogue items with categories
+      const { data: catalogueItems, error: catalogueError } = await supabase
+        .from('catalogue_items')
+        .select(`
+          *,
+          catalogue_categories (
+            id,
+            name,
+            description,
+            icon
+          )
+        `)
+        .eq('user_id', data.userId)
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true })
+        .limit(12);
+
+      if (!catalogueError && catalogueItems && catalogueItems.length > 0) {
+        catalogueHTML = generateCatalogueHTML(catalogueItems, data);
+        console.log(`✅ Generated catalogue HTML with ${catalogueItems.length} items`);
+      }
+    } catch (error) {
+      console.error('Error fetching catalogue data:', error);
     }
   }
 
@@ -890,6 +922,8 @@ async function generateMicrositeHTML(data: any, supabase: any): Promise<string> 
         </div>
     </section>
 
+    ${catalogueHTML}
+
     ${portfolioHTML}
     
     <!-- Contact Section -->
@@ -1197,28 +1231,275 @@ function generatePortfolioHTML(items: any[], reviews: any[], data: any): string 
                   <a 
                     href="${portfolioSettings.googleReviewUrl}" 
                     target="_blank"
-                    onclick="trackReviewClick('Google', '${portfolioSettings.googleReviewUrl}')"
-                    class="review-button"
-                  >
-                    ⭐ Review on Google
-                  </a>
-                ` : ''}
-                ${portfolioSettings.trustpilotReviewUrl ? `
-                  <a 
-                    href="${portfolioSettings.trustpilotReviewUrl}" 
-                    target="_blank"
-                    onclick="trackReviewClick('Trustpilot', '${portfolioSettings.trustpilotReviewUrl}')"
-                    class="review-button"
-                  >
-                    ⭐ Review on Trustpilot
-                  </a>
-                ` : ''}
-              </div>
-            </div>
+/**
+ * Generate HTML for the catalogue section with fixed/quote pricing
+ * Displays services/products with pricing, categories, and quote request functionality
+ */
+function generateCatalogueHTML(catalogueItems: any[], data: any): string {
+  const { calendlyUrl, zapierWebhook, domainSlug } = data;
+  
+  // Get unique categories for filtering
+  const categories = [...new Set(catalogueItems
+    .filter(item => item.catalogue_categories)
+    .map(item => item.catalogue_categories)
+  )];
+  
+  // Get all tags for filtering  
+  const allTags = [...new Set(catalogueItems.flatMap(item => item.tags || []))];
+  
+  return `
+    <!-- Catalogue Section -->
+    <section class="catalogue" style="padding: 4rem 0; background: var(--bg-light);">
+      <div class="container">
+        <h2 class="section-title">Our Services & Pricing</h2>
+        <p style="text-align: center; color: var(--text-light); margin-bottom: 3rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+          Transparent pricing for all our services. Get instant quotes for fixed-price services or request a custom quote for larger projects.
+        </p>
+
+        <!-- Category Filters -->
+        ${categories.length > 0 ? `
+          <div style="text-align: center; margin-bottom: 2rem;">
+            <button 
+              onclick="filterCatalogue('all')" 
+              id="cat-all"
+              style="margin: 0.25rem; padding: 0.5rem 1rem; border: 2px solid var(--primary-color); background: var(--primary-color); color: white; border-radius: 1.5rem; cursor: pointer; font-size: 0.9rem;"
+            >
+              All Services
+            </button>
+            ${categories.map(cat => `
+              <button 
+                onclick="filterCatalogue('${cat.id}')" 
+                id="cat-${cat.id}"
+                style="margin: 0.25rem; padding: 0.5rem 1rem; border: 2px solid var(--primary-color); background: white; color: var(--primary-color); border-radius: 1.5rem; cursor: pointer; font-size: 0.9rem;"
+              >
+                ${cat.icon} ${cat.name}
+              </button>
+            `).join('')}
           </div>
         ` : ''}
 
-        ${allTags.length > 0 ? `
+        <!-- Catalogue Grid -->
+        <div class="catalogue-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
+          ${catalogueItems.map(item => `
+            <div class="catalogue-item" data-category="${item.category_id || 'all'}" style="background: white; border-radius: 1rem; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+              
+              ${item.is_featured ? `
+                <div style="background: var(--primary-color); color: white; text-align: center; padding: 0.5rem; font-size: 0.85rem; font-weight: 600;">
+                  ⭐ Featured Service
+                </div>
+              ` : ''}
+              
+              ${item.image_url ? `
+                <div style="position: relative; aspect-ratio: 16/9; overflow: hidden;">
+                  <img 
+                    src="${item.image_url}" 
+                    alt="${item.name}"
+                    style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
+                    onmouseover="this.style.transform='scale(1.05)'"
+                    onmouseout="this.style.transform='scale(1)'"
+                    loading="lazy"
+                  />
+                </div>
+              ` : ''}
+
+              <div style="padding: 1.5rem;">
+                <!-- Header with title and price -->
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                  <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--text-dark); margin: 0; flex: 1;">${item.name}</h3>
+                  <div style="text-align: right; margin-left: 1rem;">
+                    ${item.pricing_type === 'fixed' && item.price ? `
+                      <div style="font-size: 1.4rem; font-weight: 700; color: var(--primary-color);">
+                        £${item.price.toLocaleString()}
+                      </div>
+                      ${item.price_display ? `
+                        <div style="font-size: 0.75rem; color: var(--text-light);">
+                          ${item.price_display}
+                        </div>
+                      ` : ''}
+                    ` : `
+                      <div style="padding: 0.25rem 0.75rem; background: var(--border-light); color: var(--text-light); border-radius: 1rem; font-size: 0.85rem;">
+                        Quote Required
+                      </div>
+                    `}
+                  </div>
+                </div>
+
+                <!-- Description -->
+                <p style="color: var(--text-light); margin-bottom: 1rem; line-height: 1.6;">
+                  ${item.short_description || item.description.substring(0, 120)}${item.description.length > 120 ? '...' : ''}
+                </p>
+
+                <!-- Features -->
+                ${item.features && item.features.length > 0 ? `
+                  <div style="margin-bottom: 1rem;">
+                    <h4 style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">Includes:</h4>
+                    <ul style="margin: 0; padding: 0; list-style: none;">
+                      ${item.features.slice(0, 3).map(feature => `
+                        <li style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.25rem; display: flex; align-items: center;">
+                          <span style="width: 4px; height: 4px; background: var(--primary-color); border-radius: 50%; margin-right: 0.5rem;"></span>
+                          ${feature}
+                        </li>
+                      `).join('')}
+                    </ul>
+                  </div>
+                ` : ''}
+
+                <!-- Tags -->
+                ${item.tags && item.tags.length > 0 ? `
+                  <div style="margin-bottom: 1rem;">
+                    ${item.tags.slice(0, 3).map(tag => `
+                      <span style="display: inline-block; padding: 0.25rem 0.5rem; background: var(--bg-light); color: var(--text-light); border-radius: 0.5rem; font-size: 0.75rem; margin-right: 0.5rem; margin-bottom: 0.25rem;">
+                        ${tag}
+                      </span>
+                    `).join('')}
+                  </div>
+                ` : ''}
+
+                <!-- Duration -->
+                ${item.duration_estimate ? `
+                  <div style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 1rem;">
+                    <strong>Timeline:</strong> ${item.duration_estimate}
+                  </div>
+                ` : ''}
+
+                <!-- Action Buttons -->
+                <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                  <button 
+                    onclick="requestQuote('${item.id}', '${item.name.replace(/'/g, "\\'")}', '${item.description.replace(/'/g, "\\'").substring(0, 100)}')"
+                    style="flex: 1; padding: 0.75rem 1rem; background: var(--primary-color); color: white; border: none; border-radius: 0.5rem; font-weight: 500; cursor: pointer; transition: opacity 0.3s ease;"
+                    onmouseover="this.style.opacity='0.9'"
+                    onmouseout="this.style.opacity='1'"
+                  >
+                    ${item.pricing_type === 'quote' ? 'Get Quote' : 'Request Service'}
+                  </button>
+                  
+                  ${calendlyUrl ? `
+                    <button 
+                      onclick="window.open('${calendlyUrl}', '_blank')"
+                      style="padding: 0.75rem; background: white; color: var(--primary-color); border: 2px solid var(--primary-color); border-radius: 0.5rem; cursor: pointer; transition: all 0.3s ease;"
+                      onmouseover="this.style.background='var(--primary-color)'; this.style.color='white'"
+                      onmouseout="this.style.background='white'; this.style.color='var(--primary-color)'"
+                      title="Book consultation"
+                    >
+                      📅
+                    </button>
+                  ` : ''}
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <!-- No items message -->
+        <div id="no-items-message" style="text-align: center; padding: 2rem; display: none;">
+          <h3 style="color: var(--text-light); margin-bottom: 0.5rem;">No services found</h3>
+          <p style="color: var(--text-light); font-size: 0.9rem;">Please try a different category or contact us for custom requirements.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quote Request Modal -->
+    <div id="quoteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
+      <div style="background: white; border-radius: 1rem; padding: 2rem; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative;">
+        <button 
+          onclick="closeQuoteModal()"
+          style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light);"
+        >
+          ×
+        </button>
+        
+        <h3 style="margin: 0 0 0.5rem 0; color: var(--text-dark);">Request Quote</h3>
+        <p id="modalServiceName" style="color: var(--text-light); margin-bottom: 1.5rem; font-size: 0.9rem;"></p>
+        
+        <form id="quoteForm" onsubmit="submitQuoteRequest(event)">
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.25rem; font-weight: 500; color: var(--text-dark);">Full Name *</label>
+            <input 
+              type="text" 
+              name="name" 
+              required
+              style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-light); border-radius: 0.5rem; font-size: 1rem;"
+            />
+          </div>
+          
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.25rem; font-weight: 500; color: var(--text-dark);">Email *</label>
+            <input 
+              type="email" 
+              name="email" 
+              required
+              style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-light); border-radius: 0.5rem; font-size: 1rem;"
+            />
+          </div>
+          
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.25rem; font-weight: 500; color: var(--text-dark);">Phone *</label>
+            <input 
+              type="tel" 
+              name="phone" 
+              required
+              style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-light); border-radius: 0.5rem; font-size: 1rem;"
+            />
+          </div>
+          
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.25rem; font-weight: 500; color: var(--text-dark);">Budget Range</label>
+            <select 
+              name="budget"
+              style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-light); border-radius: 0.5rem; font-size: 1rem;"
+            >
+              <option value="">Select budget range...</option>
+              <option value="Under £5,000">Under £5,000</option>
+              <option value="£5,000 - £15,000">£5,000 - £15,000</option>
+              <option value="£15,000 - £35,000">£15,000 - £35,000</option>
+              <option value="£35,000 - £75,000">£35,000 - £75,000</option>
+              <option value="Over £75,000">Over £75,000</option>
+            </select>
+          </div>
+          
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.25rem; font-weight: 500; color: var(--text-dark);">Preferred Timeline</label>
+            <input 
+              type="text" 
+              name="timeline" 
+              placeholder="e.g., Within 3 months"
+              style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-light); border-radius: 0.5rem; font-size: 1rem;"
+            />
+          </div>
+          
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; margin-bottom: 0.25rem; font-weight: 500; color: var(--text-dark);">Project Details</label>
+            <textarea 
+              name="message" 
+              rows="3"
+              placeholder="Tell us more about your project requirements..."
+              style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-light); border-radius: 0.5rem; font-size: 1rem; resize: vertical;"
+            ></textarea>
+          </div>
+          
+          <div style="display: flex; gap: 0.5rem;">
+            <button 
+              type="submit"
+              style="flex: 1; padding: 1rem; background: var(--primary-color); color: white; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer;"
+            >
+              Submit Quote Request
+            </button>
+            
+            ${calendlyUrl ? `
+              <button 
+                type="button"
+                onclick="window.open('${calendlyUrl}', '_blank')"
+                style="padding: 1rem; background: white; color: var(--primary-color); border: 2px solid var(--primary-color); border-radius: 0.5rem; font-weight: 600; cursor: pointer;"
+              >
+                📅 Book Call
+              </button>
+            ` : ''}
+          </div>
+        </form>
+      </div>
+    </div>
+  `;
+}
           <!-- Portfolio Filter Tags -->
           <div class="portfolio-filters">
             <button 
