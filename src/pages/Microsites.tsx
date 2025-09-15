@@ -1,8 +1,9 @@
 import React from 'react';
 import { MicrositeGenerator } from '@/components/MicrositeGenerator';
+import { MicrositeDemo } from '@/components/MicrositeDemo';
 import { WhatsAppReferralSystem } from '@/components/WhatsAppReferralSystem';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Globe, Zap, BarChart, Smartphone, MessageCircle } from 'lucide-react';
+import { Globe, Zap, BarChart, Smartphone, MessageCircle, Rocket } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Microsites = () => {
@@ -68,15 +69,23 @@ const Microsites = () => {
         </Card>
       </div>
 
-      {/* Tabbed Interface for Microsites and Referrals */}
+      {/* Tabbed Interface for Microsites, Demo, and Referrals */}
       <Tabs defaultValue="generator" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="generator">Microsite Generator</TabsTrigger>
+          <TabsTrigger value="demo">
+            <Rocket className="h-4 w-4 mr-2" />
+            Client789 Demo
+          </TabsTrigger>
           <TabsTrigger value="referrals">WhatsApp Referrals</TabsTrigger>
         </TabsList>
 
         <TabsContent value="generator">
           <MicrositeGenerator />
+        </TabsContent>
+
+        <TabsContent value="demo">
+          <MicrositeDemo />
         </TabsContent>
 
         <TabsContent value="referrals">
