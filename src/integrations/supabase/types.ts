@@ -480,6 +480,7 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: string
+          is_active: boolean | null
           logo_url: string | null
           name: string
           owner_id: string | null
@@ -489,6 +490,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          is_active?: boolean | null
           logo_url?: string | null
           name: string
           owner_id?: string | null
@@ -498,6 +500,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          is_active?: boolean | null
           logo_url?: string | null
           name?: string
           owner_id?: string | null
@@ -2238,6 +2241,7 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           certifications: string[] | null
+          company_id: string | null
           company_name: string | null
           created_at: string | null
           email: string | null
@@ -2249,6 +2253,7 @@ export type Database = {
           location: string | null
           marketing_description: string | null
           phone: string | null
+          primary_role: Database["public"]["Enums"]["app_role"] | null
           role: string
           services: string[] | null
           specialties: string[] | null
@@ -2259,6 +2264,7 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           certifications?: string[] | null
+          company_id?: string | null
           company_name?: string | null
           created_at?: string | null
           email?: string | null
@@ -2270,6 +2276,7 @@ export type Database = {
           location?: string | null
           marketing_description?: string | null
           phone?: string | null
+          primary_role?: Database["public"]["Enums"]["app_role"] | null
           role?: string
           services?: string[] | null
           specialties?: string[] | null
@@ -2280,6 +2287,7 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           certifications?: string[] | null
+          company_id?: string | null
           company_name?: string | null
           created_at?: string | null
           email?: string | null
@@ -2291,13 +2299,22 @@ export type Database = {
           location?: string | null
           marketing_description?: string | null
           phone?: string | null
+          primary_role?: Database["public"]["Enums"]["app_role"] | null
           role?: string
           services?: string[] | null
           specialties?: string[] | null
           website?: string | null
           years_experience?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       project_galleries: {
         Row: {
@@ -3026,6 +3043,44 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          assigned_at: string | null
+          assigned_by: string | null
+          company_id: string | null
+          id: string
+          is_active: boolean | null
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string | null
+        }
+        Insert: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          company_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          role: Database["public"]["Enums"]["app_role"]
+          user_id?: string | null
+        }
+        Update: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          company_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           "company name": string | null
@@ -3330,6 +3385,14 @@ export type Database = {
           safe_microsite_data: Json
         }[]
       }
+      get_user_companies: {
+        Args: { _user_id?: string }
+        Returns: {
+          company_id: string
+          company_name: string
+          user_role: Database["public"]["Enums"]["app_role"]
+        }[]
+      }
       get_user_lead_stats: {
         Args: { user_uuid?: string }
         Returns: {
@@ -3337,6 +3400,22 @@ export type Database = {
           leads_by_status: Json
           total_leads: number
         }[]
+      }
+      has_role: {
+        Args: {
+          _company_id?: string
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_company_admin: {
+        Args: { _company_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_super_user: {
+        Args: { _user_id?: string }
+        Returns: boolean
       }
       log_enhanced_security_event: {
         Args: {
@@ -3372,7 +3451,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "super_user" | "admin" | "builder" | "viewer" | "customer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3499,6 +3578,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["super_user", "admin", "builder", "viewer", "customer"],
+    },
   },
 } as const
