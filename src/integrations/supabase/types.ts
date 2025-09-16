@@ -720,33 +720,34 @@ export type Database = {
         Row: {
           address: string | null
           created_at: string | null
+          email: string | null
           id: string
+          name: string | null
+          phone: number | null
           preferred_contact: string | null
           user_id: string
         }
         Insert: {
           address?: string | null
           created_at?: string | null
+          email?: string | null
           id?: string
+          name?: string | null
+          phone?: number | null
           preferred_contact?: string | null
           user_id?: string
         }
         Update: {
           address?: string | null
           created_at?: string | null
+          email?: string | null
           id?: string
+          name?: string | null
+          phone?: number | null
           preferred_contact?: string | null
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "customers_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       discount_applications: {
         Row: {
@@ -1762,13 +1763,6 @@ export type Database = {
             columns: ["builder_id"]
             isOneToOne: false
             referencedRelation: "builders"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "leads_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "customers"
             referencedColumns: ["id"]
           },
           {
@@ -3034,6 +3028,7 @@ export type Database = {
       }
       users: {
         Row: {
+          "company name": string | null
           created_at: string | null
           email: string
           id: string
@@ -3042,6 +3037,7 @@ export type Database = {
           role: string
         }
         Insert: {
+          "company name"?: string | null
           created_at?: string | null
           email: string
           id?: string
@@ -3050,6 +3046,7 @@ export type Database = {
           role: string
         }
         Update: {
+          "company name"?: string | null
           created_at?: string | null
           email?: string
           id?: string
