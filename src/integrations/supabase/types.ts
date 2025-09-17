@@ -185,13 +185,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "booking_link_analytics_lead_id_fkey"
-            columns: ["lead_id"]
-            isOneToOne: false
-            referencedRelation: "leads"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "booking_link_analytics_message_log_id_fkey"
             columns: ["message_log_id"]
             isOneToOne: false
@@ -574,15 +567,7 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "construyo_invoices_lead_id_fkey"
-            columns: ["lead_id"]
-            isOneToOne: false
-            referencedRelation: "leads"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       construyo_reviews: {
         Row: {
@@ -650,11 +635,45 @@ export type Database = {
             referencedRelation: "construyo_invoices"
             referencedColumns: ["id"]
           },
+        ]
+      }
+      customer_activities: {
+        Row: {
+          activity_type: string
+          created_at: string | null
+          customer_id: string
+          description: string | null
+          id: string
+          new_values: Json | null
+          old_values: Json | null
+          user_id: string
+        }
+        Insert: {
+          activity_type: string
+          created_at?: string | null
+          customer_id: string
+          description?: string | null
+          id?: string
+          new_values?: Json | null
+          old_values?: Json | null
+          user_id: string
+        }
+        Update: {
+          activity_type?: string
+          created_at?: string | null
+          customer_id?: string
+          description?: string | null
+          id?: string
+          new_values?: Json | null
+          old_values?: Json | null
+          user_id?: string
+        }
+        Relationships: [
           {
-            foreignKeyName: "construyo_reviews_lead_id_fkey"
-            columns: ["lead_id"]
+            foreignKeyName: "customer_activities_customer_id_fkey"
+            columns: ["customer_id"]
             isOneToOne: false
-            referencedRelation: "leads"
+            referencedRelation: "customers"
             referencedColumns: ["id"]
           },
         ]
@@ -710,47 +729,112 @@ export type Database = {
             referencedRelation: "automation_rules"
             referencedColumns: ["id"]
           },
+        ]
+      }
+      customers: {
+        Row: {
+          archived_at: string | null
+          billing_address: string | null
+          business_registration: string | null
+          city: string | null
+          company_id: string
+          company_name: string | null
+          conversion_date: string | null
+          country: string | null
+          created_at: string | null
+          created_by: string
+          credit_limit: number | null
+          customer_type: string | null
+          email: string | null
+          first_name: string
+          id: string
+          last_name: string
+          notes: string | null
+          original_lead_id: string | null
+          payment_terms: number | null
+          phone: string | null
+          postal_code: string | null
+          primary_contact: string | null
+          service_address: string | null
+          status: Database["public"]["Enums"]["customer_status"] | null
+          tags: string[] | null
+          updated_at: string | null
+          vat_number: string | null
+        }
+        Insert: {
+          archived_at?: string | null
+          billing_address?: string | null
+          business_registration?: string | null
+          city?: string | null
+          company_id: string
+          company_name?: string | null
+          conversion_date?: string | null
+          country?: string | null
+          created_at?: string | null
+          created_by: string
+          credit_limit?: number | null
+          customer_type?: string | null
+          email?: string | null
+          first_name: string
+          id?: string
+          last_name: string
+          notes?: string | null
+          original_lead_id?: string | null
+          payment_terms?: number | null
+          phone?: string | null
+          postal_code?: string | null
+          primary_contact?: string | null
+          service_address?: string | null
+          status?: Database["public"]["Enums"]["customer_status"] | null
+          tags?: string[] | null
+          updated_at?: string | null
+          vat_number?: string | null
+        }
+        Update: {
+          archived_at?: string | null
+          billing_address?: string | null
+          business_registration?: string | null
+          city?: string | null
+          company_id?: string
+          company_name?: string | null
+          conversion_date?: string | null
+          country?: string | null
+          created_at?: string | null
+          created_by?: string
+          credit_limit?: number | null
+          customer_type?: string | null
+          email?: string | null
+          first_name?: string
+          id?: string
+          last_name?: string
+          notes?: string | null
+          original_lead_id?: string | null
+          payment_terms?: number | null
+          phone?: string | null
+          postal_code?: string | null
+          primary_contact?: string | null
+          service_address?: string | null
+          status?: Database["public"]["Enums"]["customer_status"] | null
+          tags?: string[] | null
+          updated_at?: string | null
+          vat_number?: string | null
+        }
+        Relationships: [
           {
-            foreignKeyName: "customer_interactions_lead_id_fkey"
-            columns: ["lead_id"]
+            foreignKeyName: "customers_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customers_original_lead_id_fkey"
+            columns: ["original_lead_id"]
             isOneToOne: false
             referencedRelation: "leads"
             referencedColumns: ["id"]
           },
         ]
-      }
-      customers: {
-        Row: {
-          address: string | null
-          created_at: string | null
-          email: string | null
-          id: string
-          name: string | null
-          phone: number | null
-          preferred_contact: string | null
-          user_id: string
-        }
-        Insert: {
-          address?: string | null
-          created_at?: string | null
-          email?: string | null
-          id?: string
-          name?: string | null
-          phone?: number | null
-          preferred_contact?: string | null
-          user_id?: string
-        }
-        Update: {
-          address?: string | null
-          created_at?: string | null
-          email?: string | null
-          id?: string
-          name?: string | null
-          phone?: number | null
-          preferred_contact?: string | null
-          user_id?: string
-        }
-        Relationships: []
       }
       discount_applications: {
         Row: {
@@ -1215,13 +1299,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "form_submissions_lead_id_fkey"
-            columns: ["lead_id"]
-            isOneToOne: false
-            referencedRelation: "leads"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "form_submissions_microsite_id_fkey"
             columns: ["microsite_id"]
             isOneToOne: false
@@ -1635,15 +1712,42 @@ export type Database = {
             referencedRelation: "builders"
             referencedColumns: ["id"]
           },
+        ]
+      }
+      lead_activities: {
+        Row: {
+          activity_type: string
+          created_at: string | null
+          description: string | null
+          id: string
+          lead_id: string
+          new_values: Json | null
+          old_values: Json | null
+          user_id: string
+        }
+        Insert: {
+          activity_type: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          lead_id: string
+          new_values?: Json | null
+          old_values?: Json | null
+          user_id: string
+        }
+        Update: {
+          activity_type?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          lead_id?: string
+          new_values?: Json | null
+          old_values?: Json | null
+          user_id?: string
+        }
+        Relationships: [
           {
-            foreignKeyName: "jobs_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "customers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "jobs_lead_id_fkey"
+            foreignKeyName: "lead_activities_lead_id_fkey"
             columns: ["lead_id"]
             isOneToOne: false
             referencedRelation: "leads"
@@ -1699,87 +1803,116 @@ export type Database = {
       leads: {
         Row: {
           address: string | null
-          budget_range: string | null
-          builder_id: string | null
+          archived_at: string | null
+          assigned_to: string | null
+          city: string | null
+          company_id: string
+          company_name: string | null
+          conversion_notes: string | null
+          converted_at: string | null
+          converted_to_customer_id: string | null
+          country: string | null
           created_at: string | null
-          customer_id: string
-          customer_name: string | null
-          description: string | null
+          created_by: string
           email: string | null
-          form_id: string | null
+          estimated_budget_max: number | null
+          estimated_budget_min: number | null
+          estimated_timeline: string | null
+          first_name: string
           id: string
+          last_contact_date: string | null
+          last_name: string
+          lead_source: string | null
+          next_follow_up: string | null
           notes: string | null
           phone: string | null
+          postal_code: string | null
           priority: string | null
+          project_description: string | null
           project_type: string | null
-          referral_code_id: string | null
-          source: string | null
-          status: string | null
-          timeline: string | null
+          status: Database["public"]["Enums"]["lead_status"] | null
+          tags: string[] | null
           updated_at: string | null
         }
         Insert: {
           address?: string | null
-          budget_range?: string | null
-          builder_id?: string | null
+          archived_at?: string | null
+          assigned_to?: string | null
+          city?: string | null
+          company_id: string
+          company_name?: string | null
+          conversion_notes?: string | null
+          converted_at?: string | null
+          converted_to_customer_id?: string | null
+          country?: string | null
           created_at?: string | null
-          customer_id?: string
-          customer_name?: string | null
-          description?: string | null
+          created_by: string
           email?: string | null
-          form_id?: string | null
+          estimated_budget_max?: number | null
+          estimated_budget_min?: number | null
+          estimated_timeline?: string | null
+          first_name: string
           id?: string
+          last_contact_date?: string | null
+          last_name: string
+          lead_source?: string | null
+          next_follow_up?: string | null
           notes?: string | null
           phone?: string | null
+          postal_code?: string | null
           priority?: string | null
+          project_description?: string | null
           project_type?: string | null
-          referral_code_id?: string | null
-          source?: string | null
-          status?: string | null
-          timeline?: string | null
+          status?: Database["public"]["Enums"]["lead_status"] | null
+          tags?: string[] | null
           updated_at?: string | null
         }
         Update: {
           address?: string | null
-          budget_range?: string | null
-          builder_id?: string | null
+          archived_at?: string | null
+          assigned_to?: string | null
+          city?: string | null
+          company_id?: string
+          company_name?: string | null
+          conversion_notes?: string | null
+          converted_at?: string | null
+          converted_to_customer_id?: string | null
+          country?: string | null
           created_at?: string | null
-          customer_id?: string
-          customer_name?: string | null
-          description?: string | null
+          created_by?: string
           email?: string | null
-          form_id?: string | null
+          estimated_budget_max?: number | null
+          estimated_budget_min?: number | null
+          estimated_timeline?: string | null
+          first_name?: string
           id?: string
+          last_contact_date?: string | null
+          last_name?: string
+          lead_source?: string | null
+          next_follow_up?: string | null
           notes?: string | null
           phone?: string | null
+          postal_code?: string | null
           priority?: string | null
+          project_description?: string | null
           project_type?: string | null
-          referral_code_id?: string | null
-          source?: string | null
-          status?: string | null
-          timeline?: string | null
+          status?: Database["public"]["Enums"]["lead_status"] | null
+          tags?: string[] | null
           updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "leads_builder_id_fkey"
-            columns: ["builder_id"]
+            foreignKeyName: "fk_leads_converted_customer"
+            columns: ["converted_to_customer_id"]
             isOneToOne: false
-            referencedRelation: "builders"
+            referencedRelation: "customers"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "leads_form_id_fkey"
-            columns: ["form_id"]
+            foreignKeyName: "leads_company_id_fkey"
+            columns: ["company_id"]
             isOneToOne: false
-            referencedRelation: "lead_capture_forms"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "leads_referral_code_id_fkey"
-            columns: ["referral_code_id"]
-            isOneToOne: false
-            referencedRelation: "referral_codes"
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
@@ -1891,13 +2024,6 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "message_delivery_logs_lead_id_fkey"
-            columns: ["lead_id"]
-            isOneToOne: false
-            referencedRelation: "leads"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "message_delivery_logs_template_id_fkey"
             columns: ["template_id"]
@@ -2112,13 +2238,6 @@ export type Database = {
           stripe_payment_id?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "payments_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "customers"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "payments_job_id_fkey"
             columns: ["job_id"]
@@ -2590,13 +2709,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "referral_clicks_lead_id_fkey"
-            columns: ["lead_id"]
-            isOneToOne: false
-            referencedRelation: "leads"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "referral_clicks_referral_code_id_fkey"
             columns: ["referral_code_id"]
             isOneToOne: false
@@ -3003,15 +3115,7 @@ export type Database = {
           updated_at?: string
           user_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "social_posts_lead_id_fkey"
-            columns: ["lead_id"]
-            isOneToOne: false
-            referencedRelation: "leads"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       submission_rate_limits: {
         Row: {
@@ -3350,6 +3454,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      convert_lead_to_customer: {
+        Args: { p_conversion_notes?: string; p_lead_id: string }
+        Returns: string
+      }
       encrypt_sensitive_data: {
         Args: { data: string }
         Returns: string
@@ -3452,6 +3560,14 @@ export type Database = {
     }
     Enums: {
       app_role: "super_user" | "admin" | "builder" | "viewer" | "customer"
+      customer_status: "active" | "inactive" | "archived"
+      lead_status:
+        | "new"
+        | "contacted"
+        | "qualified"
+        | "proposal_sent"
+        | "won"
+        | "lost"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3580,6 +3696,15 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["super_user", "admin", "builder", "viewer", "customer"],
+      customer_status: ["active", "inactive", "archived"],
+      lead_status: [
+        "new",
+        "contacted",
+        "qualified",
+        "proposal_sent",
+        "won",
+        "lost",
+      ],
     },
   },
 } as const
