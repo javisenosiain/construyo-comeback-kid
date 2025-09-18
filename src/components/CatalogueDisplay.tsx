@@ -237,21 +237,38 @@ export const CatalogueDisplay: React.FC<CatalogueDisplayProps> = ({
       console.log('📝 Processing quote request for:', quoteForm.serviceName);
 
       // Create lead in Construyo CRM
+      // Get user's company for proper data structure
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      const { data: userRoles } = await supabase
+        .from('user_roles')
+        .select('company_id')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .single();
+
+      if (!userRoles?.company_id) {
+        throw new Error('User company not found');
+      }
+
+      const [firstName, ...lastNameParts] = quoteForm.name.split(' ');
+      
       const { data: lead, error: leadError } = await supabase
         .from('leads')
         .insert({
-          customer_name: quoteForm.name,
+          company_id: userRoles.company_id,
+          created_by: user.id,
+          first_name: firstName,
+          last_name: lastNameParts.join(' ') || firstName,
           email: quoteForm.email,
           phone: quoteForm.phone,
           project_type: quoteForm.serviceName,
-          description: quoteForm.message,
-          budget_range: quoteForm.budget,
-          timeline: quoteForm.timeline,
-          source: `Catalogue: ${quoteForm.serviceName}`,
-          status: 'new',
+          project_description: quoteForm.message,
+          lead_source: `Catalogue: ${quoteForm.serviceName}`,
+          notes: `Budget: ${quoteForm.budget}, Timeline: ${quoteForm.timeline}. Quote request from microsite catalogue for: ${quoteForm.serviceName}`,
           priority: 'high', // Quote requests are high priority
-          customer_id: clientId,
-          notes: `Quote request from microsite catalogue for: ${quoteForm.serviceName}`
+          status: 'new'
         })
         .select()
         .single();

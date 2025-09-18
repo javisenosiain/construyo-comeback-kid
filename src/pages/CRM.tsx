@@ -4,8 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Users, Building, TrendingUp, UserCheck } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import LeadsManager from "@/components/LeadsManager";
-import CustomersManager from "@/components/CustomersManager";
+import CRMDashboard from "@/components/CRMDashboard";
 
 export default function CRM() {
   // Fetch CRM stats
@@ -168,47 +167,8 @@ export default function CRM() {
         </Card>
       </div>
 
-      {/* CRM Management Tabs */}
-      <Tabs defaultValue="leads" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="leads" className="flex items-center gap-2">
-            <Users className="w-4 h-4" />
-            Leads
-          </TabsTrigger>
-          <TabsTrigger value="customers" className="flex items-center gap-2">
-            <Building className="w-4 h-4" />
-            Customers
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="leads">
-          <Card>
-            <CardHeader>
-              <CardTitle>Leads Management</CardTitle>
-              <CardDescription>
-                Manage your lead pipeline with full workflow tracking from initial contact to conversion.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <LeadsManager />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="customers">
-          <Card>
-            <CardHeader>
-              <CardTitle>Customers Management</CardTitle>
-              <CardDescription>
-                Manage your customer relationships, projects, and ongoing business activities.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <CustomersManager />
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+      {/* CRM Dashboard */}
+      <CRMDashboard />
     </div>
   );
 }

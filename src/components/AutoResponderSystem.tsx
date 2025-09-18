@@ -41,7 +41,8 @@ interface MessageTemplate {
 
 interface Lead {
   id: string;
-  customer_name: string;
+  first_name: string;
+  last_name: string;
   email: string;
   phone?: string;
   project_type?: string;
@@ -100,12 +101,16 @@ export default function AutoResponderSystem() {
     try {
       const { data, error } = await supabase
         .from('leads')
-        .select('id, customer_name, email, phone, project_type, status')
+        .select('id, first_name, last_name, email, phone, project_type, status')
         .order('created_at', { ascending: false })
         .limit(20);
 
       if (error) throw error;
-      setLeads(data || []);
+      const leadsWithFullName = (data || []).map(lead => ({
+        ...lead,
+        customer_name: `${lead.first_name} ${lead.last_name}`
+      }));
+      setLeads(leadsWithFullName as any);
     } catch (error) {
       console.error('Error fetching leads:', error);
     }
@@ -204,7 +209,7 @@ export default function AutoResponderSystem() {
       if (error) throw error;
 
       if (data.success) {
-        toast.success(`Test ${data.messageType} sent to ${testLead.customer_name}!`);
+        toast.success(`Test ${data.messageType} sent to ${testLead.first_name} ${testLead.last_name}!`);
       } else {
         toast.error(`Failed to send test message: ${data.errorMessage}`);
       }
@@ -513,7 +518,7 @@ export default function AutoResponderSystem() {
                     <SelectContent>
                       {leads.map((lead) => (
                         <SelectItem key={lead.id} value={lead.id}>
-                          {lead.customer_name} - {lead.project_type || 'No project type'}
+                          {lead.first_name} {lead.last_name} - {lead.project_type || 'No project type'}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -578,7 +583,7 @@ export default function AutoResponderSystem() {
                   {leads.slice(0, 5).map((lead) => (
                     <div key={lead.id} className="flex items-center justify-between p-3 border rounded">
                       <div>
-                        <div className="font-medium">{lead.customer_name}</div>
+                        <div className="font-medium">{lead.first_name} {lead.last_name}</div>
                         <div className="text-sm text-muted-foreground">
                           {lead.email} • {lead.project_type || 'No project type'}
                         </div>

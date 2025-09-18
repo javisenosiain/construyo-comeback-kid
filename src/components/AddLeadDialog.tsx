@@ -23,14 +23,15 @@ const AddLeadDialog = ({ onLeadAdded }: AddLeadDialogProps) => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    customer_name: '',
+    first_name: '',
+    last_name: '',
     email: '',
     phone: '',
     project_type: '',
-    description: '',
+    project_description: '',
     address: '',
-    budget_range: '',
-    source: 'manual',
+    estimated_budget_range: '',
+    lead_source: 'manual',
     priority: 'medium',
     status: 'new'
   });
@@ -46,9 +47,32 @@ const AddLeadDialog = ({ onLeadAdded }: AddLeadDialogProps) => {
     setIsLoading(true);
 
     try {
+      // Get user's company
+      const { data: userRoles } = await supabase
+        .from('user_roles')
+        .select('company_id')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .single();
+
+      if (!userRoles?.company_id) {
+        throw new Error('User company not found');
+      }
+
       const leadData = {
-        ...formData,
-        customer_id: user.id,
+        company_id: userRoles.company_id,
+        created_by: user.id,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        email: formData.email,
+        phone: formData.phone,
+        project_type: formData.project_type,
+        project_description: formData.project_description,
+        address: formData.address,
+        lead_source: formData.lead_source,
+        priority: formData.priority,
+        status: formData.status as "new" | "contacted" | "qualified" | "proposal_sent" | "won" | "lost",
+        notes: `Budget range: ${formData.estimated_budget_range}`
       };
 
       const { error } = await supabase
@@ -59,18 +83,19 @@ const AddLeadDialog = ({ onLeadAdded }: AddLeadDialogProps) => {
 
       toast({
         title: "Lead added successfully",
-        description: `${formData.customer_name} has been added to your leads.`,
+        description: `${formData.first_name} ${formData.last_name} has been added to your leads.`,
       });
 
       setFormData({
-        customer_name: '',
+        first_name: '',
+        last_name: '',
         email: '',
         phone: '',
         project_type: '',
-        description: '',
+        project_description: '',
         address: '',
-        budget_range: '',
-        source: 'manual',
+        estimated_budget_range: '',
+        lead_source: 'manual',
         priority: 'medium',
         status: 'new'
       });
@@ -112,15 +137,28 @@ const AddLeadDialog = ({ onLeadAdded }: AddLeadDialogProps) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="customer_name">Full Name *</Label>
+              <Label htmlFor="first_name">First Name *</Label>
               <Input
-                id="customer_name"
-                value={formData.customer_name}
-                onChange={(e) => handleInputChange('customer_name', e.target.value)}
-                placeholder="Enter customer name"
+                id="first_name"
+                value={formData.first_name}
+                onChange={(e) => handleInputChange('first_name', e.target.value)}
+                placeholder="John"
                 required
               />
             </div>
+            <div>
+              <Label htmlFor="last_name">Last Name *</Label>
+              <Input
+                id="last_name"
+                value={formData.last_name}
+                onChange={(e) => handleInputChange('last_name', e.target.value)}
+                placeholder="Doe"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="email">Email</Label>
               <Input
@@ -131,9 +169,6 @@ const AddLeadDialog = ({ onLeadAdded }: AddLeadDialogProps) => {
                 placeholder="customer@email.com"
               />
             </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="phone">Phone</Label>
               <Input
@@ -143,15 +178,16 @@ const AddLeadDialog = ({ onLeadAdded }: AddLeadDialogProps) => {
                 placeholder="+44 7123 456789"
               />
             </div>
-            <div>
-              <Label htmlFor="address">Address</Label>
-              <Input
-                id="address"
-                value={formData.address}
-                onChange={(e) => handleInputChange('address', e.target.value)}
-                placeholder="City, Postcode"
-              />
-            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="address">Address</Label>
+            <Input
+              id="address"
+              value={formData.address}
+              onChange={(e) => handleInputChange('address', e.target.value)}
+              placeholder="123 Main Street, City, Postcode"
+            />
           </div>
 
           <div>
@@ -175,11 +211,11 @@ const AddLeadDialog = ({ onLeadAdded }: AddLeadDialogProps) => {
           </div>
 
           <div>
-            <Label htmlFor="description">Project Description</Label>
+            <Label htmlFor="project_description">Project Description</Label>
             <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
+              id="project_description"
+              value={formData.project_description}
+              onChange={(e) => handleInputChange('project_description', e.target.value)}
               placeholder="Describe the project requirements, timeline, and any specific details..."
               className="min-h-[100px]"
             />
@@ -187,8 +223,8 @@ const AddLeadDialog = ({ onLeadAdded }: AddLeadDialogProps) => {
 
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="budget_range">Budget Range</Label>
-              <Select onValueChange={(value) => handleInputChange('budget_range', value)}>
+              <Label htmlFor="estimated_budget_range">Budget Range</Label>
+              <Select onValueChange={(value) => handleInputChange('estimated_budget_range', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select budget range" />
                 </SelectTrigger>
@@ -221,10 +257,10 @@ const AddLeadDialog = ({ onLeadAdded }: AddLeadDialogProps) => {
           </div>
 
           <div>
-            <Label htmlFor="source">Lead Source</Label>
+            <Label htmlFor="lead_source">Lead Source</Label>
             <Select 
-              value={formData.source} 
-              onValueChange={(value) => handleInputChange('source', value)}
+              value={formData.lead_source} 
+              onValueChange={(value) => handleInputChange('lead_source', value)}
             >
               <SelectTrigger>
                 <SelectValue />
