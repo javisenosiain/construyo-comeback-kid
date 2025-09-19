@@ -943,6 +943,90 @@ export type Database = {
         }
         Relationships: []
       }
+      external_crm_settings: {
+        Row: {
+          auto_sync: boolean
+          created_at: string
+          external_crm: string
+          field_mappings: Json
+          id: string
+          is_active: boolean
+          sync_enabled: boolean
+          updated_at: string
+          user_id: string
+          zapier_webhook: string
+        }
+        Insert: {
+          auto_sync?: boolean
+          created_at?: string
+          external_crm: string
+          field_mappings?: Json
+          id?: string
+          is_active?: boolean
+          sync_enabled?: boolean
+          updated_at?: string
+          user_id: string
+          zapier_webhook: string
+        }
+        Update: {
+          auto_sync?: boolean
+          created_at?: string
+          external_crm?: string
+          field_mappings?: Json
+          id?: string
+          is_active?: boolean
+          sync_enabled?: boolean
+          updated_at?: string
+          user_id?: string
+          zapier_webhook?: string
+        }
+        Relationships: []
+      }
+      external_crm_sync_logs: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          external_crm: string
+          field_mappings: Json
+          id: string
+          record_id: string
+          record_type: string
+          retry_count: number
+          sync_status: string
+          synced_at: string | null
+          user_id: string
+          zapier_webhook: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          external_crm: string
+          field_mappings?: Json
+          id?: string
+          record_id: string
+          record_type: string
+          retry_count?: number
+          sync_status: string
+          synced_at?: string | null
+          user_id: string
+          zapier_webhook: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          external_crm?: string
+          field_mappings?: Json
+          id?: string
+          record_id?: string
+          record_type?: string
+          retry_count?: number
+          sync_status?: string
+          synced_at?: string | null
+          user_id?: string
+          zapier_webhook?: string
+        }
+        Relationships: []
+      }
       external_reviews: {
         Row: {
           id: string
