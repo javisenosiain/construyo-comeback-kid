@@ -21,12 +21,13 @@ interface CalendlyStats {
 
 interface Lead {
   id: string;
-  customer_name: string;
-  email: string;
+  first_name: string;
+  last_name: string;
+  email?: string;
   phone?: string;
   project_type?: string;
-  source?: string;
-  status: string;
+  lead_source?: string;
+  status: 'new' | 'contacted' | 'qualified' | 'proposal_sent' | 'won' | 'lost';
 }
 
 export default function CalendlyIntegration() {
@@ -61,7 +62,7 @@ export default function CalendlyIntegration() {
     try {
       const { data, error } = await supabase
         .from('leads')
-        .select('id, customer_name, email, phone, project_type, source, status')
+        .select('id, first_name, last_name, email, phone, project_type, lead_source, status')
         .order('created_at', { ascending: false })
         .limit(50);
 
@@ -141,7 +142,7 @@ export default function CalendlyIntegration() {
         body: {
           leadId: selectedLead,
           projectType: projectType,
-          leadName: lead?.customer_name,
+          leadName: lead ? `${lead.first_name} ${lead.last_name}` : '',
           leadEmail: lead?.email
         }
       });
@@ -296,7 +297,7 @@ The Construyo Team`
                     <SelectContent>
                       {leads.map((lead) => (
                         <SelectItem key={lead.id} value={lead.id}>
-                          {lead.customer_name} - {lead.email}
+                          {lead.first_name} {lead.last_name} - {lead.email}
                         </SelectItem>
                       ))}
                     </SelectContent>

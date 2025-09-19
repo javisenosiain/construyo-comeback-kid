@@ -32,11 +32,12 @@ interface Invoice {
 
 interface Lead {
   id: string;
-  customer_name: string;
-  email: string;
-  project_type: string;
-  description?: string;
-  status: string;
+  first_name: string;
+  last_name: string;
+  email?: string;
+  project_type?: string;
+  project_description?: string;
+  status: 'new' | 'contacted' | 'qualified' | 'proposal_sent' | 'won' | 'lost';
 }
 
 const Invoices = () => {
@@ -81,7 +82,7 @@ const Invoices = () => {
       const { data, error } = await supabase
         .from('leads')
         .select('*')
-        .eq('customer_id', user?.id)
+        .eq('created_by', user?.id)
         .in('status', ['new', 'contacted', 'qualified'])
         .order('created_at', { ascending: false });
 
@@ -410,7 +411,7 @@ const Invoices = () => {
                         <SelectContent>
                           {leads.map((lead) => (
                             <SelectItem key={lead.id} value={lead.id}>
-                              {lead.customer_name} - {lead.project_type.replace(/_/g, ' ')}
+                              {`${lead.first_name} ${lead.last_name}`} - {(lead.project_type || '').replace(/_/g, ' ')}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -498,8 +499,8 @@ const Invoices = () => {
                         <h4 className="font-medium mb-2">Selected Lead Details:</h4>
                         {leads.find(l => l.id === selectedLead) && (
                           <div className="text-sm text-muted-foreground space-y-1">
-                            <p><strong>Name:</strong> {leads.find(l => l.id === selectedLead)?.customer_name}</p>
-                            <p><strong>Project:</strong> {leads.find(l => l.id === selectedLead)?.project_type.replace(/_/g, ' ')}</p>
+                            <p><strong>Name:</strong> {leads.find(l => l.id === selectedLead) ? `${leads.find(l => l.id === selectedLead)?.first_name} ${leads.find(l => l.id === selectedLead)?.last_name}` : ''}</p>
+                            <p><strong>Project:</strong> {(leads.find(l => l.id === selectedLead)?.project_type || '').replace(/_/g, ' ')}</p>
                             <p><strong>Email:</strong> {leads.find(l => l.id === selectedLead)?.email}</p>
                             <p><strong>Status:</strong> {leads.find(l => l.id === selectedLead)?.status}</p>
                           </div>

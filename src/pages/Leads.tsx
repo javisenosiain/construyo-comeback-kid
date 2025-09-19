@@ -16,17 +16,17 @@ import { useAuth } from "@/contexts/AuthContext";
 
 interface Lead {
   id: string;
-  user_id?: string;
-  name?: string;
+  first_name: string;
+  last_name: string;
   email?: string;
   phone?: string;
   project_type?: string;
-  description?: string;
-  location?: string;
-  budget_min?: number;
-  budget_max?: number;
-  source: string;
-  status: string;
+  project_description?: string;
+  address?: string;
+  estimated_budget_min?: number;
+  estimated_budget_max?: number;
+  lead_source?: string;
+  status: 'new' | 'contacted' | 'qualified' | 'proposal_sent' | 'won' | 'lost';
   priority?: string;
   created_at: string;
   updated_at?: string;
@@ -74,16 +74,16 @@ const Leads = () => {
   };
 
   const calculateStats = (leadsData: Lead[]) => {
-    const whatsapp = leadsData.filter(lead => lead.source === 'whatsapp_referral').length;
-    const website = leadsData.filter(lead => lead.source === 'website_form').length;
-    const planning = leadsData.filter(lead => lead.source === 'planning_alert').length;
-    const converted = leadsData.filter(lead => lead.status === 'converted').length;
+    const whatsapp = leadsData.filter(lead => lead.lead_source === 'whatsapp_referral').length;
+    const website = leadsData.filter(lead => lead.lead_source === 'website_form').length;
+    const planning = leadsData.filter(lead => lead.lead_source === 'planning_alert').length;
+    const converted = leadsData.filter(lead => lead.status === 'won').length;
     const conversionRate = leadsData.length > 0 ? Math.round((converted / leadsData.length) * 100) : 0;
 
     setStats({ whatsapp, website, planning, conversionRate });
   };
 
-  const updateLeadStatus = async (leadId: string, newStatus: string) => {
+  const updateLeadStatus = async (leadId: string, newStatus: 'new' | 'contacted' | 'qualified' | 'proposal_sent' | 'won' | 'lost') => {
     try {
       const { error } = await supabase
         .from('leads')
@@ -149,12 +149,12 @@ const Leads = () => {
   };
 
   const filteredLeads = leads.filter(lead => {
-    const matchesSearch = (lead.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch = (`${lead.first_name} ${lead.last_name}`).toLowerCase().includes(searchTerm.toLowerCase()) ||
                          (lead.project_type || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (lead.location || '').toLowerCase().includes(searchTerm.toLowerCase());
+                         (lead.address || '').toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === "all" || lead.status === statusFilter;
-    const matchesSource = sourceFilter === "all" || lead.source === sourceFilter;
+    const matchesSource = sourceFilter === "all" || lead.lead_source === sourceFilter;
     
     return matchesSearch && matchesStatus && matchesSource;
   });
@@ -282,7 +282,7 @@ const Leads = () => {
                 <div className="flex justify-between items-start">
                   <div>
                     <CardTitle className="flex items-center gap-3">
-                      {lead.name || 'Unnamed Lead'}
+                      {`${lead.first_name} ${lead.last_name}` || 'Unnamed Lead'}
                       <Badge className={getStatusColor(lead.status)}>
                         {lead.status}
                       </Badge>
@@ -298,16 +298,16 @@ const Leads = () => {
                   </div>
                   <div className="text-right">
                     <div className="text-lg font-semibold text-success">
-                      {formatBudget(lead.budget_min, lead.budget_max)}
+                      {formatBudget(lead.estimated_budget_min, lead.estimated_budget_max)}
                     </div>
                     <div className="text-sm text-muted-foreground">Estimated value</div>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
-                {lead.description && (
-                  <p className="text-sm text-muted-foreground mb-4">{lead.description}</p>
-                )}
+                 {lead.project_description && (
+                   <p className="text-sm text-muted-foreground mb-4">{lead.project_description}</p>
+                 )}
                 
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                   {lead.email && (
@@ -322,12 +322,12 @@ const Leads = () => {
                       <span className="text-sm">{lead.phone}</span>
                     </div>
                   )}
-                  {lead.location && (
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm">{lead.location}</span>
-                    </div>
-                  )}
+                   {lead.address && (
+                     <div className="flex items-center gap-2">
+                       <MapPin className="w-4 h-4 text-muted-foreground" />
+                       <span className="text-sm">{lead.address}</span>
+                     </div>
+                   )}
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-muted-foreground" />
                     <span className="text-sm">{new Date(lead.created_at).toLocaleDateString()}</span>
@@ -336,12 +336,12 @@ const Leads = () => {
                 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline">{lead.source.replace(/_/g, ' ')}</Badge>
+                    <Badge variant="outline">{lead.lead_source?.replace(/_/g, ' ') || 'Unknown'}</Badge>
                   </div>
                   <div className="flex gap-2">
                     <Select 
                       value={lead.status}
-                      onValueChange={(value) => updateLeadStatus(lead.id, value)}
+                      onValueChange={(value: 'new' | 'contacted' | 'qualified' | 'proposal_sent' | 'won' | 'lost') => updateLeadStatus(lead.id, value)}
                     >
                       <SelectTrigger className="w-32">
                         <SelectValue />
