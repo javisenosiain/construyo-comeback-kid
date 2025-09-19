@@ -27,6 +27,8 @@ import {
   DollarSign
 } from "lucide-react";
 import { format } from "date-fns";
+import { CRMSyncButton } from "./CRMSyncButton";
+import { ExternalCRMSettings } from "./ExternalCRMSettings";
 
 // Type definitions based on actual database schema
 interface Lead {
@@ -571,11 +573,12 @@ export default function CRMDashboard() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="leads">Leads</TabsTrigger>
           <TabsTrigger value="customers">Customers</TabsTrigger>
           <TabsTrigger value="projects">Projects</TabsTrigger>
+          <TabsTrigger value="settings">CRM Settings</TabsTrigger>
         </TabsList>
 
         {/* Leads Tab */}
@@ -710,6 +713,9 @@ export default function CRMDashboard() {
               </p>
             </CardContent>
           </Card>
+        </TabsContent>
+        <TabsContent value="settings">
+          <ExternalCRMSettings />
         </TabsContent>
       </Tabs>
     </div>

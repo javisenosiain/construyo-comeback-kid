@@ -3585,6 +3585,21 @@ export type Database = {
           user_role: Database["public"]["Enums"]["app_role"]
         }[]
       }
+      get_user_crm_settings: {
+        Args: { p_user_id: string }
+        Returns: {
+          auto_sync: boolean
+          created_at: string
+          external_crm: string
+          field_mappings: Json
+          id: string
+          is_active: boolean
+          sync_enabled: boolean
+          updated_at: string
+          user_id: string
+          zapier_webhook: string
+        }[]
+      }
       get_user_lead_stats: {
         Args: { user_uuid?: string }
         Returns: {
@@ -3638,6 +3653,18 @@ export type Database = {
           p_record_id: string
           p_sensitive_fields?: string[]
           p_table_name: string
+        }
+        Returns: undefined
+      }
+      upsert_crm_settings: {
+        Args: {
+          p_auto_sync: boolean
+          p_external_crm: string
+          p_field_mappings: Json
+          p_is_active: boolean
+          p_sync_enabled: boolean
+          p_user_id: string
+          p_zapier_webhook: string
         }
         Returns: undefined
       }

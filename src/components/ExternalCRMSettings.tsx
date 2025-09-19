@@ -111,18 +111,20 @@ export const ExternalCRMSettings: React.FC = () => {
 
   const fetchSettings = async () => {
     try {
-      // Use RPC call to avoid type issues until types are regenerated
-      const { data, error } = await supabase.rpc('get_user_crm_settings', {
-        p_user_id: user?.id
-      });
+      // Use direct query to get settings
+      const { data, error } = await supabase
+        .from('external_crm_settings' as any)
+        .select('*')
+        .eq('user_id', user?.id)
+        .maybeSingle();
 
       if (error && error.code !== 'PGRST116') {
         console.error('Error fetching CRM settings:', error);
         return;
       }
 
-      if (data && data.length > 0) {
-        setSettings(data[0] as CRMSettings);
+      if (data) {
+        setSettings(data as unknown as CRMSettings);
       }
     } catch (error) {
       console.error('Error fetching settings:', error);
@@ -141,16 +143,20 @@ export const ExternalCRMSettings: React.FC = () => {
 
     setSaving(true);
     try {
-      // Use RPC call to save settings to avoid type issues
-      const { error } = await supabase.rpc('upsert_crm_settings', {
-        p_user_id: user.id,
-        p_external_crm: settings.external_crm,
-        p_is_active: settings.is_active,
-        p_zapier_webhook: settings.zapier_webhook,
-        p_field_mappings: settings.field_mappings,
-        p_sync_enabled: settings.sync_enabled,
-        p_auto_sync: settings.auto_sync
-      });
+      const settingsData = {
+        user_id: user.id,
+        external_crm: settings.external_crm,
+        is_active: settings.is_active,
+        zapier_webhook: settings.zapier_webhook,
+        field_mappings: settings.field_mappings,
+        sync_enabled: settings.sync_enabled,
+        auto_sync: settings.auto_sync,
+        updated_at: new Date().toISOString()
+      };
+
+      const { error } = await supabase
+        .from('external_crm_settings' as any)
+        .upsert([settingsData], { onConflict: 'user_id' });
 
       if (error) {
         throw error;
