@@ -24,7 +24,9 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
-  DollarSign
+  DollarSign,
+  Settings,
+  ExternalLink
 } from "lucide-react";
 import { format } from "date-fns";
 import { CRMSyncButton } from "./CRMSyncButton";
@@ -671,6 +673,12 @@ export default function CRMDashboard() {
                       <TableCell>{format(new Date(lead.created_at), 'MMM dd, yyyy')}</TableCell>
                       <TableCell>
                         <div className="flex gap-2">
+                          <CRMSyncButton
+                            recordType="lead"
+                            recordId={lead.id}
+                            size="sm"
+                            variant="ghost"
+                          />
                           <Button variant="ghost" size="sm">
                             <Eye className="w-4 h-4" />
                           </Button>
