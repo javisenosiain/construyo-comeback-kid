@@ -3675,17 +3675,6 @@ export type Database = {
           user_id: string
         }[]
       }
-      get_microsite_public_data: {
-        Args: { microsite_slug: string }
-        Returns: {
-          client_name: string
-          created_at: string
-          domain_slug: string
-          id: string
-          is_active: boolean
-          safe_microsite_data: Json
-        }[]
-      }
       get_user_companies: {
         Args: { _user_id?: string }
         Returns: {
