@@ -3638,6 +3638,43 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_integration_analytics: {
+        Args: {
+          end_date?: string
+          service_filter?: string
+          start_date?: string
+          user_uuid: string
+        }
+        Returns: {
+          action: string
+          created_at: string
+          duration_ms: number
+          error_message: string
+          id: string
+          metadata: Json
+          request_data: string
+          response_data: string
+          service_name: string
+          status: string
+          user_id: string
+        }[]
+      }
+      get_last_integration_activity: {
+        Args: { service_filter?: string; user_uuid: string }
+        Returns: {
+          action: string
+          created_at: string
+          duration_ms: number
+          error_message: string
+          id: string
+          metadata: Json
+          request_data: string
+          response_data: string
+          service_name: string
+          status: string
+          user_id: string
+        }[]
+      }
       get_microsite_public_data: {
         Args: { microsite_slug: string }
         Returns: {
@@ -3670,6 +3707,18 @@ export type Database = {
           updated_at: string
           user_id: string
           zapier_webhook: string
+        }[]
+      }
+      get_user_integration_configs: {
+        Args: { user_uuid: string }
+        Returns: {
+          created_at: string
+          encrypted_config: Json
+          id: string
+          is_active: boolean
+          service_name: string
+          updated_at: string
+          user_id: string
         }[]
       }
       get_user_lead_stats: {
@@ -3708,6 +3757,20 @@ export type Database = {
         }
         Returns: undefined
       }
+      log_integration_activity: {
+        Args: {
+          p_action: string
+          p_duration_ms?: number
+          p_error_message?: string
+          p_metadata?: Json
+          p_request_data?: string
+          p_response_data?: string
+          p_service_name: string
+          p_status: string
+          p_user_id: string
+        }
+        Returns: undefined
+      }
       log_security_event: {
         Args: {
           p_event_data?: Json
@@ -3739,6 +3802,15 @@ export type Database = {
           p_zapier_webhook: string
         }
         Returns: undefined
+      }
+      upsert_integration_config: {
+        Args: {
+          p_encrypted_config: Json
+          p_is_active: boolean
+          p_service_name: string
+          p_user_id: string
+        }
+        Returns: string
       }
     }
     Enums: {

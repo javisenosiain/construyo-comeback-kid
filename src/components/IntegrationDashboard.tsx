@@ -343,7 +343,7 @@ export const IntegrationDashboard: React.FC = () => {
                                 }}
                               />
                             </div>
-                            <span className="text-sm text-muted-foreground">{count}</span>
+                            <span className="text-sm text-muted-foreground">{count as number}</span>
                           </div>
                         </div>
                       ))}
