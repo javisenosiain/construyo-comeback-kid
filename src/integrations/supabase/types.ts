@@ -1434,6 +1434,78 @@ export type Database = {
         }
         Relationships: []
       }
+      integration_activity_logs: {
+        Row: {
+          action: string
+          created_at: string
+          duration_ms: number | null
+          error_message: string | null
+          id: string
+          metadata: Json | null
+          request_data: string | null
+          response_data: string | null
+          service_name: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          request_data?: string | null
+          response_data?: string | null
+          service_name: string
+          status: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          request_data?: string | null
+          response_data?: string | null
+          service_name?: string
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      integration_configs: {
+        Row: {
+          created_at: string
+          encrypted_config: Json
+          id: string
+          is_active: boolean
+          service_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          encrypted_config?: Json
+          id?: string
+          is_active?: boolean
+          service_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          encrypted_config?: Json
+          id?: string
+          is_active?: boolean
+          service_name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       invoice_analytics: {
         Row: {
           created_at: string | null

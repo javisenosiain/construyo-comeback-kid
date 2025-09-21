@@ -49,8 +49,7 @@ export class IntegrationLogger {
       };
 
       const { error } = await supabase
-        .from('integration_activity_logs')
-        .insert(logEntry);
+        .rpc('log_integration_activity', logEntry);
 
       if (error) {
         console.error('Failed to log integration activity:', error);
@@ -128,15 +127,10 @@ export class IntegrationLogger {
       if (!user) return null;
 
       let query = supabase
-        .from('integration_activity_logs')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(1);
-
-      if (serviceName) {
-        query = query.eq('service_name', serviceName);
-      }
+        .rpc('get_last_integration_activity', { 
+          user_uuid: user.id,
+          service_filter: serviceName 
+        });
 
       const { data, error } = await query;
 
@@ -159,10 +153,13 @@ export class IntegrationLogger {
         throw new Error('User not authenticated');
       }
 
-      let query = supabase
-        .from('integration_activity_logs')
-        .select('*')
-        .eq('user_id', user.id);
+      const { data: logs, error } = await supabase
+        .rpc('get_integration_analytics', {
+          user_uuid: user.id,
+          service_filter: serviceName,
+          start_date: timeRange?.start?.toISOString(),
+          end_date: timeRange?.end?.toISOString()
+        });
 
       if (serviceName) {
         query = query.eq('service_name', serviceName);
