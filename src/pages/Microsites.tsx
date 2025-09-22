@@ -1,5 +1,6 @@
 import React from 'react';
 import { MicrositeGenerator } from '@/components/MicrositeGenerator';
+import { MicrositeCreator } from '@/components/MicrositeCreator';
 import { MicrositeDemo } from '@/components/MicrositeDemo';
 import { WhatsAppReferralSystem } from '@/components/WhatsAppReferralSystem';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -70,15 +71,20 @@ const Microsites = () => {
       </div>
 
       {/* Tabbed Interface for Microsites, Demo, and Referrals */}
-      <Tabs defaultValue="generator" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="generator">Microsite Generator</TabsTrigger>
+      <Tabs defaultValue="creator" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="creator">Microsite Creator</TabsTrigger>
+          <TabsTrigger value="generator">Legacy Generator</TabsTrigger>
           <TabsTrigger value="demo">
             <Rocket className="h-4 w-4 mr-2" />
             Client789 Demo
           </TabsTrigger>
           <TabsTrigger value="referrals">WhatsApp Referrals</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="creator">
+          <MicrositeCreator />
+        </TabsContent>
 
         <TabsContent value="generator">
           <MicrositeGenerator />
