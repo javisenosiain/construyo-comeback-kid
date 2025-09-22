@@ -17,18 +17,26 @@ import {
   Loader2,
   Database,
   Clock,
-  AlertTriangle
+  AlertTriangle,
+  Mail,
+  Phone
 } from "lucide-react";
 
 interface PlanningEntity {
   id: string;
   name: string;
-  address: string;
+  address: string; // Site/physical address of application
   postcode: string;
   localAuthority: string;
   startDate: string;
   endDate: string;
   geometry: string;
+  applicant?: {
+    name: string; // Applicant contact name
+    email: string; // Applicant email
+    telephone: string; // Applicant phone
+    address: string; // Applicant physical address
+  };
   raw: any;
 }
 
@@ -334,58 +342,93 @@ export default function PlanningDataScraper() {
                 </CardHeader>
               </Card>
 
-              {/* Results List */}
+              {/* Results List - Updated to extract and highlight email, address, contact */}
               {results.success && results.entities.length > 0 && (
                 <div className="space-y-4">
-                  {results.entities.slice(0, 20).map((entity, index) => (
-                    <Card key={entity.id || index}>
-                      <CardContent className="pt-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <h4 className="font-semibold text-lg">{entity.name}</h4>
-                            <p className="text-sm text-muted-foreground">ID: {entity.id}</p>
-                            
-                            {entity.address && (
-                              <div className="flex items-center space-x-1 mt-2">
-                                <MapPin className="h-4 w-4 text-muted-foreground" />
-                                <span className="text-sm">{entity.address}</span>
-                              </div>
-                            )}
-                            
-                            {entity.postcode && (
-                              <div className="flex items-center space-x-1 mt-1">
-                                <Building className="h-4 w-4 text-muted-foreground" />
-                                <span className="text-sm">{entity.postcode}</span>
-                              </div>
-                            )}
-                          </div>
+                  {results.entities.slice(0, 20).map((entity, index) => {
+                    // Extract fields
+                    const siteAddress = entity.address || 'N/A';
+                    const applicantName = entity.applicant?.name || entity.agent?.name || 'N/A';
+                    const applicantEmail = entity.applicant?.email || entity.agent?.email || 'Not publicly available';
+                    const applicantPhone = entity.applicant?.telephone || entity.contact || 'N/A';
+                    const applicantAddress = entity.applicant?.address || 'N/A';
 
-                          <div className="space-y-2">
-                            {entity.localAuthority && (
-                              <div>
-                                <span className="text-sm font-medium">Local Authority: </span>
-                                <span className="text-sm">{entity.localAuthority}</span>
-                              </div>
-                            )}
-                            
-                            {entity.startDate && (
+                    return (
+                      <Card key={entity.id || index}>
+                        <CardContent className="pt-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <h4 className="font-semibold text-lg">{entity.name}</h4>
+                              <p className="text-sm text-muted-foreground">ID: {entity.id}</p>
+                              
+                              {/* Physical Address of Application (Site) */}
+                              {siteAddress !== 'N/A' && (
+                                <div className="flex items-center space-x-1 mt-2">
+                                  <MapPin className="h-4 w-4 text-muted-foreground" />
+                                  <span className="text-sm font-medium">Site Address: </span>
+                                  <span className="text-sm">{siteAddress}</span>
+                                </div>
+                              )}
+                              
+                              {/* Applicant Physical Address */}
+                              {applicantAddress !== 'N/A' && (
+                                <div className="flex items-center space-x-1 mt-1">
+                                  <MapPin className="h-4 w-4 text-muted-foreground" />
+                                  <span className="text-sm font-medium">Applicant Address: </span>
+                                  <span className="text-sm">{applicantAddress}</span>
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="space-y-2">
+                              {/* Applicant Contact Name & Email */}
+                              {applicantName !== 'N/A' && (
+                                <div>
+                                  <span className="text-sm font-medium">Applicant Name: </span>
+                                  <span className="text-sm">{applicantName}</span>
+                                </div>
+                              )}
+                              
+                              {/* Applicant Email */}
                               <div className="flex items-center space-x-1">
-                                <Calendar className="h-4 w-4 text-muted-foreground" />
-                                <span className="text-sm">Start: {entity.startDate}</span>
+                                <Mail className="h-4 w-4 text-muted-foreground" />
+                                <span className="text-sm font-medium">Email: </span>
+                                <span className="text-sm">{applicantEmail}</span>
                               </div>
-                            )}
-                            
-                            {entity.endDate && (
+
+                              {/* Applicant Phone/Contact */}
                               <div className="flex items-center space-x-1">
-                                <Calendar className="h-4 w-4 text-muted-foreground" />
-                                <span className="text-sm">End: {entity.endDate}</span>
+                                <Phone className="h-4 w-4 text-muted-foreground" />
+                                <span className="text-sm font-medium">Phone/Contact: </span>
+                                <span className="text-sm">{applicantPhone}</span>
                               </div>
-                            )}
+
+                              {entity.localAuthority && (
+                                <div>
+                                  <span className="text-sm font-medium">Local Authority: </span>
+                                  <span className="text-sm">{entity.localAuthority}</span>
+                                </div>
+                              )}
+                              
+                              {entity.startDate && (
+                                <div className="flex items-center space-x-1">
+                                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                                  <span className="text-sm">Start: {entity.startDate}</span>
+                                </div>
+                              )}
+                              
+                              {entity.endDate && (
+                                <div className="flex items-center space-x-1">
+                                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                                  <span className="text-sm">End: {entity.endDate}</span>
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
                   
                   {results.entities.length > 20 && (
                     <Card>
