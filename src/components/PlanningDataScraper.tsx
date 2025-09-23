@@ -18,21 +18,19 @@ import {
   Database,
   Clock,
   AlertTriangle,
-  Mail,
-  Phone,
   Link as LinkIcon
 } from "lucide-react";
 
 interface PlanningEntity {
   id: string;
   name: string;
-  address: string; // Street address of the application site
+  site_address: string; // Street address where work happens
   postcode: string;
   localAuthority: string;
+  description: string; // Brief overview of project
+  url: string; // Link to application
   startDate: string;
   endDate: string;
-  description: string; // Brief description of the application
-  url: string; // Link to the application details
   geometry: string;
   applicant?: {
     name: string;
@@ -55,17 +53,18 @@ interface ApiResponse {
 }
 
 export default function PlanningDataScraper() {
-  const [filterType, setFilterType] = useState("local-authority");
+  const [filterType, setFilterType] = useState("postcode"); // Default to postcode for apps
   const [filterValue, setFilterValue] = useState("");
-  const [limit, setLimit] = useState(1000);
+  const [limit, setLimit] = useState(10); // Lower for apps
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<ApiResponse | null>(null);
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [zapierWebhook, setZapierWebhook] = useState("");
 
+  const SEARCHLAND_KEY = import.meta.env.VITE_SEARCHLAND_KEY || ''; // From .env
+
   /**
-   * Execute planning data search
-   * Sample usage: local-authority=chichester, postcode=PO19, organisation=chichester
+   * Execute planning data search using Searchland API for applications
    */
   const searchPlanningData = async () => {
     if (!filterValue.trim()) {
@@ -77,51 +76,44 @@ export default function PlanningDataScraper() {
     const startTime = Date.now();
 
     try {
-      console.log(`🔍 Searching Planning Data API: ${filterType}=${filterValue}`);
+      console.log(`🔍 Searching Planning Applications: ${filterType}=${filterValue}`);
       
-      // Call our edge function with optional Zapier integration
-      const { data, error } = await supabase.functions.invoke('planning-data-scraper', {
-        body: {
-          filterType,
-          filterValue: filterValue.toLowerCase().trim(),
-          limit,
-          zapierWebhook: zapierWebhook.trim() || undefined
-        }
-      });
-
-      if (error) {
-        console.error('Edge function error:', error);
-        throw new Error(error.message || 'Failed to fetch planning data');
-      }
+      // Use Searchland API for detailed planning apps
+      const query = `${filterType}:${filterValue}`;
+      const url = `https://api.searchland.co.uk/planning-applications?api_key=${SEARCHLAND_KEY}&q=${encodeURIComponent(query)}&limit=${limit}`;
+      
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`API error: ${response.status}`);
+      const data = await response.json();
 
       const duration = Date.now() - startTime;
       console.log(`✅ Search completed in ${duration}ms`);
 
-      // Extract and enhance results with description and link
-      const extractedResults = (data.entities || []).map((entity: any) => ({
-        id: entity.id || 'N/A',
-        name: entity.name || 'N/A',
-        address: entity.address || 'N/A', // Street address of application
-        postcode: entity.postcode || 'N/A',
-        localAuthority: entity.localAuthority || entity.organisation?.name || 'N/A',
-        startDate: entity.startDate || 'N/A',
-        endDate: entity.endDate || 'N/A',
-        description: entity.description || entity.summary || entity.decisionDetails || 'N/A', // Brief description
-        url: entity.url || '#', // Link to application
-        geometry: entity.geometry || 'N/A',
-        applicantName: entity.applicant?.name || entity.agent?.name || 'N/A',
-        applicantEmail: entity.applicant?.email || entity.agent?.email || 'Not publicly available',
-        applicantPhone: entity.applicant?.telephone || entity.contact || 'N/A',
-        applicantAddress: entity.applicant?.address || 'N/A',
-        raw: entity
+      // Extract key fields for applications
+      const extractedResults = (data.results || data.applications || []).map((app: any) => ({
+        id: app.id || app.application_reference || 'N/A',
+        name: app.development_type || app.proposal || 'N/A', // As overview
+        site_address: app.site_address || app.development_address || 'N/A', // Street address where work happens
+        postcode: app.postcode || 'N/A',
+        localAuthority: app.local_authority || app.authority || 'N/A',
+        description: app.description || app.proposal_details || app.decision_summary || 'No description available', // Brief project overview
+        url: app.application_url || app.link || `https://planning.data.gov.uk/application/${app.id}`, // Link to app
+        startDate: app.validation_date || app.start_date || 'N/A',
+        endDate: app.decision_date || app.end_date || 'N/A',
+        geometry: app.coordinates || 'N/A', // Lat/long if available
+        applicantName: app.applicant_name || 'N/A',
+        applicantEmail: app.applicant_email || 'Not publicly available',
+        applicantPhone: app.applicant_phone || 'N/A',
+        applicantAddress: app.applicant_address || 'N/A',
+        raw: app
       }));
 
       const response: ApiResponse = {
         success: true,
         filterType,
         filterValue,
-        totalResults: data.totalResults || extractedResults.length,
-        cached: data.cached,
+        totalResults: data.total || extractedResults.length,
+        cached: false, // Add caching if needed
         timestamp: new Date().toISOString(),
         entities: extractedResults
       };
@@ -131,4 +123,53 @@ export default function PlanningDataScraper() {
       // Add to search history
       const searchTerm = `${filterType}=${filterValue}`;
       setSearchHistory(prev => 
-        [searchTerm, ...prev.filter(item => item !== searchTerm)].slice(0
+        [searchTerm, ...prev.filter(item => item !== searchTerm)].slice(0, 5)
+      );
+
+      toast.success(
+        `Found ${response.totalResults} applications in ${duration}ms`
+      );
+
+      // Optional Zapier trigger
+      if (zapierWebhook && extractedResults.length > 0) {
+        await fetch(zapierWebhook, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(response)
+        });
+      }
+
+      // Save to Supabase
+      await supabase.from('planning_searches').insert({
+        postcode: filterValue,
+        results: response
+      });
+
+    } catch (error) {
+      console.error('Search failed:', error);
+      toast.error(`Search failed: ${error.message}`);
+      setResults({
+        success: false,
+        error: error.message,
+        filterType,
+        filterValue,
+        totalResults: 0,
+        cached: false,
+        timestamp: new Date().toISOString(),
+        entities: []
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
+   * Export results to JSON file
+   */
+  const exportResults = () => {
+    if (!results || !results.entities.length) {
+      toast.error("No data to export");
+      return;
+    }
+
+    const dataStr
