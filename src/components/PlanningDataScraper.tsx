@@ -33,12 +33,6 @@ interface PlanningEntity {
   startDate: string;
   endDate: string;
   geometry: string;
-  applicant?: {
-    name: string;
-    email: string;
-    telephone: string;
-    address: string;
-  };
   raw: any;
 }
 
@@ -112,4 +106,17 @@ export default function PlanningDataScraper() {
       const deltaEntities = currentEntities.filter((entity: any) => !existingIds.has(entity.id));
       const totalNew = deltaEntities.length;
 
-      const response: ApiResponse
+      const response: ApiResponse = {
+        success: true,
+        filterType,
+        filterValue,
+        totalResults: totalNew,
+        cached: data.cached,
+        timestamp: new Date().toISOString(),
+        entities: deltaEntities
+      };
+
+      setResults(response);
+      
+      // Save full data
+      await supabase.from('planning
