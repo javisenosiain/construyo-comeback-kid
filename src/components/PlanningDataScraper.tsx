@@ -18,7 +18,8 @@ import {
   Database,
   Clock,
   AlertTriangle,
-  Link as LinkIcon
+  Link as LinkIcon,
+  RefreshCw
 } from "lucide-react";
 
 interface PlanningEntity {
@@ -32,6 +33,12 @@ interface PlanningEntity {
   startDate: string;
   endDate: string;
   geometry: string;
+  applicant?: {
+    name: string;
+    email: string;
+    telephone: string;
+    address: string;
+  };
   raw: any;
 }
 
@@ -105,35 +112,4 @@ export default function PlanningDataScraper() {
       const deltaEntities = currentEntities.filter((entity: any) => !existingIds.has(entity.id));
       const totalNew = deltaEntities.length;
 
-      const response: ApiResponse = {
-        success: true,
-        filterType,
-        filterValue,
-        totalResults: totalNew,
-        cached: data.cached,
-        timestamp: new Date().toISOString(),
-        entities: deltaEntities
-      };
-
-      setResults(response);
-      
-      // Save full data
-      await supabase.from('planning_searches').insert({
-        postcode: filterValue,
-        results: data
-      });
-      
-      // History
-      const searchTerm = `${filterType}=${filterValue}`;
-      setSearchHistory(prev => [searchTerm, ...prev.filter(item => item !== searchTerm)].slice(0, 5));
-
-      toast.success(`Found ${totalNew} new/updated in ${duration}ms`);
-    } catch (error) {
-      console.error('Error:', error);
-      toast.error(`Search failed: ${error.message}`);
-      setResults({
-        success: false,
-        error: error.message,
-        filterType,
-        filterValue,
-        totalResults
+      const response: ApiResponse
