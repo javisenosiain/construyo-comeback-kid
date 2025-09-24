@@ -1,57 +1,148 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Building2, Menu, X, Users, FileText, CreditCard, Star, Share2, Settings, BarChart3, LogOut, User, Database, Globe, MessageSquare, Calendar, Image } from "lucide-react";
+import { Building2, Menu, X, Users, FileText, CreditCard, Star, Share2, Settings, BarChart3, LogOut, User, Database, Globe, MessageSquare, Calendar, Image, ChevronDown, Target, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [leadsOpen, setLeadsOpen] = useState(true);
+  const [marketingOpen, setMarketingOpen] = useState(true);
   const location = useLocation();
   const { user, signOut } = useAuth();
 
-  const navigationItems = [
-    { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
-    { href: "/leads", label: "Leads", icon: Users },
-    { href: "/crm", label: "CRM", icon: Database },
-    { href: "/calendly", label: "Calendly", icon: Calendar },
-    { href: "/planning-data", label: "Planning Data", icon: Database },
-    { href: "/auto-responder", label: "Auto-Responder", icon: MessageSquare },
-    { href: "/microsites", label: "Microsites", icon: Globe },
-    { href: "/invoices", label: "Invoices", icon: FileText },
-    { href: "/payments", label: "Payments", icon: CreditCard },
-    { href: "/reviews", label: "Reviews", icon: Star },
-    { href: "/portfolio", label: "Portfolio", icon: Image },
-    { href: "/social", label: "Social Media", icon: Share2 },
-    { href: "/settings", label: "Settings", icon: Settings },
+  const navigationSections = [
+    {
+      title: "Core",
+      items: [
+        { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
+      ]
+    },
+    {
+      title: "Capturing Leads",
+      icon: Target,
+      isCollapsible: true,
+      isOpen: leadsOpen,
+      setIsOpen: setLeadsOpen,
+      items: [
+        { href: "/leads", label: "Current Leads", icon: Users },
+        { href: "/planning-data", label: "Planning Data", icon: Database },
+        { href: "/calendly", label: "Calendly Meetings", icon: Calendar },
+        { href: "/auto-responder", label: "Auto Responder", icon: MessageSquare },
+        { href: "/invoices", label: "Invoices & Payments", icon: FileText },
+      ]
+    },
+    {
+      title: "Marketing",
+      icon: TrendingUp,
+      isCollapsible: true,
+      isOpen: marketingOpen,
+      setIsOpen: setMarketingOpen,
+      items: [
+        { href: "/reviews", label: "Reviews", icon: Star },
+        { href: "/portfolio", label: "Portfolio", icon: Image },
+        { href: "/social", label: "Social Media", icon: Share2 },
+      ]
+    },
+    {
+      title: "Tools",
+      items: [
+        { href: "/crm", label: "CRM", icon: Database },
+        { href: "/microsites", label: "Microsites", icon: Globe },
+        { href: "/payments", label: "Payments", icon: CreditCard },
+        { href: "/settings", label: "Settings", icon: Settings },
+      ]
+    }
   ];
 
   const NavItems = ({ mobile = false }) => (
-    <>
-      {navigationItems.map((item) => {
-        const Icon = item.icon;
-        const isActive = location.pathname === item.href;
-        
-        return (
-          <Link
-            key={item.href}
-            to={item.href}
-            className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-              mobile ? "text-sidebar-foreground" : "text-gray-700"
-            } ${
-              isActive
-                ? "bg-primary text-primary-foreground"
-                : "hover:bg-gray-200 hover:text-gray-900"
-            }`}
-            onClick={() => mobile && setIsOpen(false)}
-          >
-            <Icon className="w-5 h-5" />
-            <span className={mobile ? "text-lg" : ""}>{item.label}</span>
-          </Link>
-        );
-      })}
-    </>
+    <div className="space-y-2">
+      {navigationSections.map((section, sectionIndex) => (
+        <div key={sectionIndex} className="space-y-1">
+          {section.isCollapsible ? (
+            <Collapsible open={section.isOpen} onOpenChange={section.setIsOpen}>
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className={`w-full justify-between px-3 py-2 h-auto font-medium ${
+                    mobile ? "text-sidebar-foreground" : "text-gray-700"
+                  } hover:bg-gray-200`}
+                >
+                  <div className="flex items-center gap-2">
+                    {section.icon && <section.icon className="w-4 h-4" />}
+                    <span className={mobile ? "text-base" : "text-sm"}>{section.title}</span>
+                  </div>
+                  <ChevronDown className={`w-4 h-4 transition-transform ${section.isOpen ? 'rotate-180' : ''}`} />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-1">
+                <div className={mobile ? "pl-6 space-y-1" : "pl-4 space-y-1"}>
+                  {section.items.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = location.pathname === item.href;
+                    
+                    return (
+                      <Link
+                        key={item.href}
+                        to={item.href}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                          mobile ? "text-sidebar-foreground" : "text-gray-600"
+                        } ${
+                          isActive
+                            ? "bg-primary text-primary-foreground"
+                            : "hover:bg-gray-100 hover:text-gray-900"
+                        }`}
+                        onClick={() => mobile && setIsOpen(false)}
+                      >
+                        <Icon className="w-4 h-4" />
+                        <span className={mobile ? "text-sm" : "text-sm"}>{item.label}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          ) : (
+            <>
+              {section.title !== "Core" && (
+                <div className={`px-3 py-1 text-xs font-semibold uppercase tracking-wider ${
+                  mobile ? "text-sidebar-muted-foreground" : "text-gray-500"
+                }`}>
+                  {section.title}
+                </div>
+              )}
+              <div className="space-y-1">
+                {section.items.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.href;
+                  
+                  return (
+                    <Link
+                      key={item.href}
+                      to={item.href}
+                      className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                        mobile ? "text-sidebar-foreground" : "text-gray-700"
+                      } ${
+                        isActive
+                          ? "bg-primary text-primary-foreground"
+                          : "hover:bg-gray-200 hover:text-gray-900"
+                      }`}
+                      onClick={() => mobile && setIsOpen(false)}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <span className={mobile ? "text-lg" : ""}>{item.label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </div>
+      ))}
+    </div>
   );
 
   return (
