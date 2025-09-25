@@ -149,7 +149,7 @@ const Index = () => {
         <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold mb-4">
-              Why Choose Construyo?
+              Why Choose Constituyo?
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Built by compliance experts and powered by AI, Constituyo transforms how businesses handle legal requirements
@@ -225,7 +225,7 @@ const Index = () => {
         <div className="container mx-auto max-w-6xl">
           <div className="text-center">
             <h3 className="text-2xl font-bold text-sidebar-foreground mb-4">
-              Construyo
+              Constituyo
             </h3>
             <p className="text-sidebar-foreground/80">
               AI-powered business compliance made simple
