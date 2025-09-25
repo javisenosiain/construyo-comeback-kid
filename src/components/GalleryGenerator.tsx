@@ -285,7 +285,7 @@ export default function GalleryGenerator() {
             <Button 
               onClick={() => generateGallery("proj123", "photo", sampleConfig)}
               disabled={generating === "proj123-photo"}
-              className="h-auto p-4 flex flex-col items-start gap-2"
+              className="h-auto p-4 flex flex-row items-start gap-2"
             >
               {generating === "proj123-photo" ? (
                 <Loader2 className="h-5 w-5 animate-spin" />

@@ -306,7 +306,7 @@ export default function AutoResponderSystem() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-row sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-2xl font-bold">Auto-Responder System</h2>
           <p className="text-muted-foreground">
