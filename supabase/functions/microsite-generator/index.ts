@@ -1249,7 +1249,7 @@ function generateCatalogueHTML(catalogueItems: any[], data: any): string {
   
   return `
     <!-- Catalogue Section -->
-    <section class="catalogue" style="padding: 4rem 0; background: var(--bg-light);">
+    const htmlTemplate = `<section class="catalogue" style="padding: 4rem 0; background: var(--bg-light);">
       <div class="container">
         <h2 class="section-title">Our Services & Pricing</h2>
         <p style="text-align: center; color: var(--text-light); margin-bottom: 3rem; max-width: 600px; margin-left: auto; margin-right: auto;">
