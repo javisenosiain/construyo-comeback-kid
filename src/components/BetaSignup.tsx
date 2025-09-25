@@ -104,7 +104,7 @@ const BetaSignup = ({ open, onOpenChange }: BetaSignupProps) => {
             Join Beta Waitlist
           </DialogTitle>
           <DialogDescription className="text-left pt-4">
-            Constituyo is your AI-powered ally for business compliance. We simplify legal headaches by automating contract analysis, tracking regulatory changes, and generating compliant documents—saving you time and reducing risks. Join our Beta to be among the first to access these tools and transform how your business stays audit-ready.
+            Construyo is your AI-powered ally for business compliance. We simplify legal headaches by automating contract analysis, tracking regulatory changes, and generating compliant documents—saving you time and reducing risks. Join our Beta to be among the first to access these tools and transform how your business stays audit-ready.
           </DialogDescription>
         </DialogHeader>
 

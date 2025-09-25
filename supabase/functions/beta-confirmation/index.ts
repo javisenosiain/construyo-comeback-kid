@@ -24,7 +24,7 @@ const handler = async (req: Request): Promise<Response> => {
     const { name, email }: BetaConfirmationRequest = await req.json();
 
     const emailResponse = await resend.emails.send({
-      from: "Constituyo <onboarding@resend.dev>",
+      from: "Construyo <onboarding@resend.dev>",
       to: [email],
       subject: "Welcome to Constituyo Beta!",
       html: `
@@ -52,7 +52,7 @@ const handler = async (req: Request): Promise<Response> => {
           <div style="text-align: center; color: #666; font-size: 14px;">
             <p>Questions? Reply to this email or contact us at beta@constituyo.com</p>
             <p style="margin-top: 20px;">
-              <strong>Constituyo Team</strong><br>
+              <strong>Construyo Team</strong><br>
               AI-powered business compliance made simple
             </p>
           </div>

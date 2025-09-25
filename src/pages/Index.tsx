@@ -64,7 +64,7 @@ const Index = () => {
         <div className="container mx-auto max-w-6xl">
           <div className="text-center">
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
-              Constituyo
+              Construyo
             </h1>
             <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
               Your AI-powered ally for business compliance. Automate contract analysis, track regulatory changes, and generate compliant documents.
@@ -149,7 +149,7 @@ const Index = () => {
         <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold mb-4">
-              Why Choose Constituyo?
+              Why Choose Construyo?
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Built by compliance experts and powered by AI, Constituyo transforms how businesses handle legal requirements
@@ -225,7 +225,7 @@ const Index = () => {
         <div className="container mx-auto max-w-6xl">
           <div className="text-center">
             <h3 className="text-2xl font-bold text-sidebar-foreground mb-4">
-              Constituyo
+              Construyo
             </h3>
             <p className="text-sidebar-foreground/80">
               AI-powered business compliance made simple
