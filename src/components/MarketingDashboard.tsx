@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -42,6 +43,7 @@ interface SocialPost {
 }
 
 const MarketingDashboard = () => {
+  const { user } = useAuth();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [socialPosts, setSocialPosts] = useState<SocialPost[]>([]);
@@ -113,7 +115,7 @@ const MarketingDashboard = () => {
           comment: newReview.comment,
           customer_name: newReview.customer_name,
           status: 'published',
-          user_id: auth.uid()
+          user_id: user?.id
         }]);
 
       if (error) throw error;
@@ -144,7 +146,7 @@ const MarketingDashboard = () => {
           gallery_type: newProject.category || 'photo',
           generation_status: 'completed',
           project_id: 'manual-' + Date.now(),
-          user_id: auth.uid()
+          user_id: user?.id
         }]);
 
       if (error) throw error;
@@ -558,7 +560,7 @@ const MarketingDashboard = () => {
                             `Posted ${new Date(post.posted_at).toLocaleDateString()}` :
                             post.scheduled_for ?
                             `Scheduled for ${new Date(post.scheduled_for).toLocaleDateString()}` :
-                            `Created ${new Date(post.created_at).toLocaleDateString()}`
+                            `Created ${new Date().toLocaleDateString()}`
                           }
                         </div>
                         {post.engagement_stats && (

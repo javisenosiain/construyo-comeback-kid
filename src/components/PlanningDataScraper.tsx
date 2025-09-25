@@ -98,7 +98,7 @@ export default function PlanningDataScraper() {
         .order('created_at', { ascending: false })
         .limit(1);
 
-      const existingEntities = existing?.[0]?.results?.entities || [];
+      const existingEntities = (existing?.[0]?.results as any)?.entities || [];
       const existingIds = new Set(existingEntities.map((e: any) => e.id));
 
       // Compute deltas
@@ -119,4 +119,136 @@ export default function PlanningDataScraper() {
       setResults(response);
       
       // Save full data
-      await supabase.from('planning
+      await supabase.from('planning_searches').insert({
+        postcode: filterValue,
+        results: deltaEntities
+      });
+      
+    } catch (error) {
+      console.error('Error fetching planning data:', error);
+      setResults({
+        success: false,
+        filterType,
+        filterValue,
+        totalResults: 0,
+        cached: false,
+        timestamp: new Date().toISOString(),
+        entities: [],
+        error: 'Failed to fetch planning data'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Database className="w-5 h-5" />
+            Planning Data Scraper
+          </CardTitle>
+          <CardDescription>
+            Search for planning applications and development data
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="filterType">Filter Type</Label>
+              <Select value={filterType} onValueChange={setFilterType}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="postcode">Postcode</SelectItem>
+                  <SelectItem value="address">Address</SelectItem>
+                  <SelectItem value="authority">Local Authority</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="filterValue">Search Value</Label>
+              <Input
+                id="filterValue"
+                placeholder="e.g. SW1A 1AA"
+                value={filterValue}
+                onChange={(e) => setFilterValue(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && searchPlanningData()}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="limit">Limit</Label>
+              <Select value={limit.toString()} onValueChange={(v) => setLimit(parseInt(v))}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="25">25</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <Button 
+            onClick={searchPlanningData} 
+            disabled={loading || !filterValue.trim()}
+            className="w-full"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Searching...
+              </>
+            ) : (
+              <>
+                <Search className="w-4 h-4 mr-2" />
+                Search Planning Data
+              </>
+            )}
+          </Button>
+
+          {results && (
+            <div className="mt-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">Results</h3>
+                <Badge variant={results.success ? "default" : "destructive"}>
+                  {results.totalResults} new results
+                </Badge>
+              </div>
+              
+              {results.entities.length > 0 ? (
+                <div className="grid gap-4">
+                  {results.entities.slice(0, 5).map((entity) => (
+                    <Card key={entity.id} className="p-4">
+                      <div className="space-y-2">
+                        <h4 className="font-medium">{entity.name}</h4>
+                        <p className="text-sm text-muted-foreground flex items-center gap-1">
+                          <MapPin className="w-3 h-3" />
+                          {entity.site_address}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {entity.description}
+                        </p>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground text-center py-8">
+                  No new planning applications found
+                </p>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

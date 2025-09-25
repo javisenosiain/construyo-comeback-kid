@@ -140,6 +140,36 @@ export type Database = {
         }
         Relationships: []
       }
+      beta_subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+          status: string
+          subscribed_at: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          status?: string
+          subscribed_at?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          status?: string
+          subscribed_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       booking_link_analytics: {
         Row: {
           calendly_event_id: string | null
@@ -2427,6 +2457,27 @@ export type Database = {
           id?: string
           query?: string
           timestamp?: string
+        }
+        Relationships: []
+      }
+      planning_searches: {
+        Row: {
+          created_at: string | null
+          id: string
+          postcode: string
+          results: Json | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          postcode: string
+          results?: Json | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          postcode?: string
+          results?: Json | null
         }
         Relationships: []
       }
