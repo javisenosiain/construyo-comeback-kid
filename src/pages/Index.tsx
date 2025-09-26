@@ -152,7 +152,7 @@ const Index = () => {
               Why Choose Construyo?
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Built by compliance experts and powered by AI, Constituyo transforms how businesses handle legal requirements
+              Built by compliance experts and powered by AI, Construyo transforms how businesses handle legal requirements
             </p>
           </div>
 
@@ -186,7 +186,7 @@ const Index = () => {
             <div className="bg-background rounded-lg p-8 shadow-lg">
               <h4 className="text-lg font-semibold mb-4">Join the Beta Program</h4>
               <p className="text-muted-foreground mb-6">
-                Get exclusive early access to Constituyo's AI compliance platform and help shape the future of business compliance automation.
+                Get exclusive early access to Construyo's AI compliance platform and help shape the future of business compliance automation.
               </p>
               <Button 
                 onClick={() => setShowBetaSignup(true)}

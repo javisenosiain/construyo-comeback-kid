@@ -58,6 +58,67 @@ const Navigation = () => {
     }
   ];
 
+  const HorizontalNavItems = () => (
+    <div className="flex items-center gap-6">
+      {navigationSections.map((section, sectionIndex) => (
+        <div key={sectionIndex}>
+          {section.isCollapsible ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="flex items-center gap-2 text-foreground hover:text-primary">
+                  {section.icon && <section.icon className="w-4 h-4" />}
+                  <span className="font-medium">{section.title}</span>
+                  <ChevronDown className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>{section.title}</DropdownMenuLabel>
+                {section.items.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.href;
+                  
+                  return (
+                    <DropdownMenuItem key={item.href} asChild>
+                      <Link
+                        to={item.href}
+                        className={`flex items-center gap-2 ${isActive ? "bg-primary text-primary-foreground" : ""}`}
+                      >
+                        <Icon className="w-4 h-4" />
+                        <span>{item.label}</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <div className="flex items-center gap-4">
+              {section.items.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.href;
+                
+                return (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-colors ${
+                      isActive
+                        ? "bg-primary text-primary-foreground"
+                        : "text-foreground hover:text-primary hover:bg-secondary"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+
   const NavItems = ({ mobile = false }) => (
     <div className="space-y-2">
       {navigationSections.map((section, sectionIndex) => (
@@ -68,8 +129,8 @@ const Navigation = () => {
                 <Button
                   variant="ghost"
                   className={`w-full justify-between px-3 py-2 h-auto font-medium ${
-                    mobile ? "text-sidebar-foreground" : "text-gray-700"
-                  } hover:bg-gray-200`}
+                    mobile ? "text-sidebar-foreground" : "text-foreground"
+                  } hover:bg-secondary`}
                 >
                   <div className="flex items-center gap-2">
                     {section.icon && <section.icon className="w-4 h-4" />}
@@ -89,11 +150,11 @@ const Navigation = () => {
                         key={item.href}
                         to={item.href}
                         className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                          mobile ? "text-sidebar-foreground" : "text-gray-600"
+                          mobile ? "text-sidebar-foreground" : "text-muted-foreground"
                         } ${
                           isActive
                             ? "bg-primary text-primary-foreground"
-                            : "hover:bg-gray-100 hover:text-gray-900"
+                            : "hover:bg-secondary hover:text-foreground"
                         }`}
                         onClick={() => mobile && setIsOpen(false)}
                       >
@@ -109,7 +170,7 @@ const Navigation = () => {
             <>
               {section.title !== "Core" && (
                 <div className={`px-3 py-1 text-xs font-semibold uppercase tracking-wider ${
-                  mobile ? "text-sidebar-muted-foreground" : "text-gray-500"
+                  mobile ? "text-sidebar-muted-foreground" : "text-muted-foreground"
                 }`}>
                   {section.title}
                 </div>
@@ -124,11 +185,11 @@ const Navigation = () => {
                       key={item.href}
                       to={item.href}
                       className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                        mobile ? "text-sidebar-foreground" : "text-gray-700"
+                        mobile ? "text-sidebar-foreground" : "text-foreground"
                       } ${
                         isActive
                           ? "bg-primary text-primary-foreground"
-                          : "hover:bg-gray-200 hover:text-gray-900"
+                          : "hover:bg-secondary hover:text-foreground"
                       }`}
                       onClick={() => mobile && setIsOpen(false)}
                     >
@@ -146,25 +207,25 @@ const Navigation = () => {
   );
 
   return (
-    <nav className="bg-gray-100 border-b border-gray-200">
+    <nav className="bg-background border-b border-border">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <Building2 className="w-8 h-8 text-primary" />
-            <span className="text-xl font-bold text-gray-900">Construyo</span>
+            <span className="text-xl font-bold">Construyo</span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1">
-            <NavItems />
+          {/* Desktop Navigation - Horizontal */}
+          <div className="hidden lg:flex items-center gap-6 flex-1 justify-center">
+            <HorizontalNavItems />
           </div>
 
           {/* User Menu */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="flex items-center gap-4">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="text-gray-700 hover:text-gray-900 hover:bg-gray-200">
+                <Button variant="ghost" className="text-foreground hover:text-primary hover:bg-secondary">
                   <User className="w-5 h-5 mr-2" />
                   {user?.email}
                 </Button>
@@ -186,10 +247,10 @@ const Navigation = () => {
           </div>
 
           {/* Mobile Menu */}
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-gray-700 hover:text-gray-900 hover:bg-gray-200">
+                <Button variant="ghost" size="icon" className="text-foreground hover:text-primary hover:bg-secondary">
                   <Menu className="w-6 h-6" />
                 </Button>
               </SheetTrigger>
