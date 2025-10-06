@@ -60,16 +60,6 @@ const Index = () => {
             <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
               Your AI-powered ally for business compliance. Automate contract analysis, track regulatory changes, and generate compliant documents.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                size="lg" 
-                variant="outline"
-                className="bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-sm"
-                asChild
-              >
-                <Link to="/auth">Login / Signup</Link>
-              </Button>
-            </div>
           </div>
         </div>
       </section>
@@ -151,12 +141,6 @@ const Index = () => {
               <p className="text-muted-foreground mb-6">
                 Experience Construyo's AI compliance platform and transform how you manage business compliance.
               </p>
-              <Button 
-                asChild
-                className="w-full bg-success hover:bg-success/90 text-success-foreground"
-              >
-                <Link to="/auth">Sign Up Now</Link>
-              </Button>
             </div>
           </div>
         </div>
@@ -171,13 +155,6 @@ const Index = () => {
           <p className="text-xl text-muted-foreground mb-8">
             Experience AI-powered compliance automation today
           </p>
-          <Button 
-            size="lg" 
-            asChild
-            className="bg-success hover:bg-success/90 text-success-foreground font-semibold group transition-all hover:scale-105"
-          >
-            <Link to="/auth">Get Started</Link>
-          </Button>
         </div>
       </section>
 
@@ -191,15 +168,6 @@ const Index = () => {
             <p className="text-sidebar-foreground/80">
               AI-powered business compliance made simple
             </p>
-            <div className="mt-6">
-              <Button 
-                variant="outline" 
-                asChild
-                className="border-sidebar-accent text-sidebar-foreground hover:bg-sidebar-accent"
-              >
-                <Link to="/auth">Get Started</Link>
-              </Button>
-            </div>
           </div>
         </div>
       </footer>
