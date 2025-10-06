@@ -2,12 +2,9 @@ import { useState } from "react";
 import { Building2, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Link } from "react-router-dom";
 
-interface LandingNavigationProps {
-  onBetaClick: () => void;
-}
-
-const LandingNavigation = ({ onBetaClick }: LandingNavigationProps) => {
+const LandingNavigation = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const navigationItems = [
@@ -52,16 +49,16 @@ const LandingNavigation = ({ onBetaClick }: LandingNavigationProps) => {
           <div className="hidden md:flex items-center gap-4">
             <Button
               variant="outline"
-              onClick={onBetaClick}
+              asChild
               className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
             >
-              Login
+              <Link to="/auth">Login</Link>
             </Button>
-            <Button
-              onClick={onBetaClick}
+            <Button 
+              asChild
               className="bg-success hover:bg-success/90 text-success-foreground"
             >
-              Join Beta
+              <Link to="/beta">Join Beta</Link>
             </Button>
           </div>
 
@@ -102,22 +99,16 @@ const LandingNavigation = ({ onBetaClick }: LandingNavigationProps) => {
                   <div className="border-t border-border pt-4 mt-4">
                     <Button
                       variant="outline"
-                      onClick={() => {
-                        onBetaClick();
-                        setIsOpen(false);
-                      }}
+                      asChild
                       className="w-full mb-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                     >
-                      Login
+                      <Link to="/auth" onClick={() => setIsOpen(false)}>Login</Link>
                     </Button>
                     <Button
-                      onClick={() => {
-                        onBetaClick();
-                        setIsOpen(false);
-                      }}
+                      asChild
                       className="w-full bg-success hover:bg-success/90 text-success-foreground"
                     >
-                      Join Beta
+                      <Link to="/beta" onClick={() => setIsOpen(false)}>Join Beta</Link>
                     </Button>
                   </div>
                 </div>

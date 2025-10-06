@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Navigation from "./components/Navigation";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Index from "./pages/Index";
+import Beta from "./pages/Beta";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Leads from "./pages/Leads";
@@ -43,6 +44,7 @@ const AppContent = () => {
       )}
       <Routes>
         <Route path="/" element={<Index />} />
+        <Route path="/beta" element={<Beta />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/dashboard" element={
           <ProtectedRoute>

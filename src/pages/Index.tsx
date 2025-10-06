@@ -1,16 +1,10 @@
-import { useState } from "react";
-import { Building2, Users, FileText, CreditCard, Star, Share2, Image, Calendar, Check } from "lucide-react";
+import { Building2, Users, FileText, CreditCard, Star, Share2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "react-router-dom";
 import LandingNavigation from "@/components/LandingNavigation";
-import BetaSignup from "@/components/BetaSignup";
-import SocialMedia from "./SocialMedia";
-import GalleryGenerator from "@/components/GalleryGenerator";
 
 const Index = () => {
-  const [showBetaSignup, setShowBetaSignup] = useState(false);
 
   const mvpFeatures = [
     {
@@ -54,10 +48,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Landing Navigation */}
-      <LandingNavigation onBetaClick={() => setShowBetaSignup(true)} />
-
-      {/* Beta Signup Modal */}
-      <BetaSignup open={showBetaSignup} onOpenChange={setShowBetaSignup} />
+      <LandingNavigation />
 
       {/* Hero Section */}
       <section id="home" className="relative overflow-hidden bg-gradient-hero py-24 px-6 pt-32">
@@ -72,14 +63,6 @@ const Index = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
                 size="lg" 
-                onClick={() => setShowBetaSignup(true)}
-                className="bg-success hover:bg-success/90 text-success-foreground font-semibold group transition-all hover:scale-105"
-              >
-                <Check className="w-5 h-5 mr-2 group-hover:animate-pulse" />
-                Join Beta Waitlist
-              </Button>
-              <Button 
-                size="lg" 
                 variant="outline"
                 className="bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-sm"
                 asChild
@@ -91,26 +74,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Show Interest in Beta Section */}
-      <section className="py-16 px-6 bg-gradient-to-br from-success/10 to-accent/10">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Ready to Transform Your Business Compliance?
-          </h2>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Join our exclusive Beta program and be among the first to experience AI-powered compliance automation. 
-            Get early access, priority support, and help shape the future of business compliance.
-          </p>
-          <Button 
-            size="lg" 
-            onClick={() => setShowBetaSignup(true)}
-            className="bg-success hover:bg-success/90 text-success-foreground font-semibold group transition-all hover:scale-105 shadow-lg"
-          >
-            <Check className="w-5 h-5 mr-2 group-hover:animate-pulse" />
-            Join Beta Waitlist
-          </Button>
-        </div>
-      </section>
 
       {/* MVP Features Section */}
       <section id="features" className="py-24 px-6">
@@ -184,16 +147,15 @@ const Index = () => {
               </div>
             </div>
             <div className="bg-background rounded-lg p-8 shadow-lg">
-              <h4 className="text-lg font-semibold mb-4">Join the Beta Program</h4>
+              <h4 className="text-lg font-semibold mb-4">Get Started Today</h4>
               <p className="text-muted-foreground mb-6">
-                Get exclusive early access to Construyo's AI compliance platform and help shape the future of business compliance automation.
+                Experience Construyo's AI compliance platform and transform how you manage business compliance.
               </p>
               <Button 
-                onClick={() => setShowBetaSignup(true)}
+                asChild
                 className="w-full bg-success hover:bg-success/90 text-success-foreground"
               >
-                <Check className="w-4 h-4 mr-2" />
-                Join Beta Waitlist
+                <Link to="/auth">Sign Up Now</Link>
               </Button>
             </div>
           </div>
@@ -207,15 +169,14 @@ const Index = () => {
             Ready to Simplify Your Compliance?
           </h2>
           <p className="text-xl text-muted-foreground mb-8">
-            Join the Beta program and be among the first to experience AI-powered compliance automation
+            Experience AI-powered compliance automation today
           </p>
           <Button 
             size="lg" 
-            onClick={() => setShowBetaSignup(true)}
+            asChild
             className="bg-success hover:bg-success/90 text-success-foreground font-semibold group transition-all hover:scale-105"
           >
-            <Check className="w-5 h-5 mr-2 group-hover:animate-pulse" />
-            Join Beta Waitlist
+            <Link to="/auth">Get Started</Link>
           </Button>
         </div>
       </section>
@@ -233,11 +194,10 @@ const Index = () => {
             <div className="mt-6">
               <Button 
                 variant="outline" 
-                onClick={() => setShowBetaSignup(true)}
+                asChild
                 className="border-sidebar-accent text-sidebar-foreground hover:bg-sidebar-accent"
               >
-                <Check className="w-4 h-4 mr-2" />
-                Join Beta
+                <Link to="/auth">Get Started</Link>
               </Button>
             </div>
           </div>
