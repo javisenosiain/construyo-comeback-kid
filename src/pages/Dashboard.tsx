@@ -1,55 +1,144 @@
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { 
   Users, 
   FileText, 
   CreditCard, 
   Star, 
   Share2, 
-  TrendingUp, 
   Calendar,
-  Bell
+  Bell,
+  Loader2
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
-  const stats = [
-    {
-      title: "Active Leads",
-      value: "12",
-      change: "+8%",
-      icon: Users,
-      color: "text-primary"
-    },
-    {
-      title: "Pending Invoices",
-      value: "£8,450",
-      change: "+12%",
-      icon: FileText,
-      color: "text-accent-foreground"
-    },
-    {
-      title: "This Month Revenue",
-      value: "£24,680",
-      change: "+15%",
-      icon: CreditCard,
-      color: "text-success"
-    },
-    {
-      title: "Average Rating",
-      value: "4.8",
-      change: "+0.2",
-      icon: Star,
-      color: "text-primary"
-    }
-  ];
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    activeLeads: 0,
+    pendingPayments: 0,
+    last7DaysRevenue: 0,
+    averageRating: 0
+  });
+  const [recentActivity, setRecentActivity] = useState<Array<{type: string, message: string, time: string}>>([]);
+  const [upcomingTasks, setUpcomingTasks] = useState<Array<{message: string, dueDate: string}>>([]);
 
-  const recentActivity = [
-    { type: "lead", message: "New lead from WhatsApp referral", time: "2 hours ago" },
-    { type: "payment", message: "Payment received from John Smith", time: "4 hours ago" },
-    { type: "review", message: "5-star review posted on Google", time: "1 day ago" },
-    { type: "social", message: "Project photos posted to Instagram", time: "2 days ago" }
-  ];
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  const loadDashboardData = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Get user's company
+      const { data: userRoles } = await supabase
+        .from('user_roles')
+        .select('company_id')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .single();
+
+      if (!userRoles?.company_id) return;
+
+      // Fetch active leads
+      const { data: leadsData } = await supabase
+        .from('leads')
+        .select('status')
+        .eq('company_id', userRoles.company_id)
+        .in('status', ['new', 'contacted', 'qualified']);
+
+      // Fetch pending payments
+      const { data: invoicesData } = await supabase
+        .from('construyo_invoices')
+        .select('amount, status')
+        .eq('user_id', user.id)
+        .eq('status', 'pending');
+
+      // Calculate last 7 days revenue
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      
+      const { data: revenueData } = await supabase
+        .from('construyo_invoices')
+        .select('amount')
+        .eq('user_id', user.id)
+        .eq('status', 'paid')
+        .gte('paid_date', sevenDaysAgo.toISOString());
+
+      // Fetch reviews
+      const { data: reviewsData } = await supabase
+        .from('construyo_reviews')
+        .select('rating')
+        .eq('user_id', user.id)
+        .eq('status', 'published');
+
+      // Fetch recent activity (lead activities, customer interactions, etc)
+      const { data: leadActivities } = await supabase
+        .from('lead_activities')
+        .select('activity_type, description, created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(4);
+
+      const activeLeads = leadsData?.length || 0;
+      const pendingPayments = invoicesData?.reduce((sum, inv) => sum + Number(inv.amount), 0) || 0;
+      const last7DaysRevenue = revenueData?.reduce((sum, inv) => sum + Number(inv.amount), 0) || 0;
+      const avgRating = reviewsData?.length > 0
+        ? reviewsData.reduce((sum, r) => sum + r.rating, 0) / reviewsData.length
+        : 0;
+
+      setStats({
+        activeLeads,
+        pendingPayments,
+        last7DaysRevenue,
+        averageRating: Number(avgRating.toFixed(1))
+      });
+
+      // Set recent activity with fallback dummy data
+      if (leadActivities && leadActivities.length > 0) {
+        setRecentActivity(leadActivities.map(activity => ({
+          type: activity.activity_type,
+          message: activity.description,
+          time: getTimeAgo(activity.created_at)
+        })));
+      } else {
+        setRecentActivity([
+          { type: "lead", message: "New lead from WhatsApp referral", time: "2 hours ago" },
+          { type: "payment", message: "Payment received from client", time: "4 hours ago" },
+          { type: "review", message: "5-star review received", time: "1 day ago" },
+          { type: "social", message: "Project photos posted", time: "2 days ago" }
+        ]);
+      }
+
+      // Set upcoming tasks with dummy data for now
+      setUpcomingTasks([
+        { message: "Follow up with kitchen extension lead", dueDate: "Tomorrow" },
+        { message: "Send invoice to completed project", dueDate: "Friday" },
+        { message: "Request review from satisfied customer", dueDate: "Next week" }
+      ]);
+
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+    
+    if (diffInHours < 1) return 'Just now';
+    if (diffInHours < 24) return `${diffInHours} hours ago`;
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays === 1) return '1 day ago';
+    return `${diffInDays} days ago`;
+  };
 
   const quickActions = [
     { label: "Create Invoice", icon: FileText, href: "/invoices" },
@@ -57,6 +146,14 @@ const Dashboard = () => {
     { label: "Request Review", icon: Star, href: "/reviews" },
     { label: "Schedule Post", icon: Share2, href: "/social" }
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -69,76 +166,55 @@ const Dashboard = () => {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat, index) => (
-            <Card key={index}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                <stat.icon className={`w-4 h-4 ${stat.color}`} />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
-                <p className="text-xs text-muted-foreground">
-                  <span className="text-success">{stat.change}</span> from last month
-                </p>
-              </CardContent>
-            </Card>
-          ))}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Active Leads</CardTitle>
+              <Users className="w-4 h-4 text-primary" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.activeLeads}</div>
+              <p className="text-xs text-muted-foreground">Current pipeline</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Pending Payments</CardTitle>
+              <FileText className="w-4 h-4 text-accent-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">£{stats.pendingPayments.toLocaleString()}</div>
+              <p className="text-xs text-muted-foreground">Outstanding invoices</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Last 7 Days Revenue</CardTitle>
+              <CreditCard className="w-4 h-4 text-success" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">£{stats.last7DaysRevenue.toLocaleString()}</div>
+              <p className="text-xs text-muted-foreground">Recent income</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Average Rating</CardTitle>
+              <Star className="w-4 h-4 text-primary" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.averageRating || 'N/A'}</div>
+              <p className="text-xs text-muted-foreground">Customer reviews</p>
+            </CardContent>
+          </Card>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* MVP Progress */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5" />
-                  MVP Goals Progress
-                </CardTitle>
-                <CardDescription>
-                  Track your progress towards the core business automation goals
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <div className="flex justify-between mb-2">
-                    <span>Lead Capture System</span>
-                    <span className="text-sm text-muted-foreground">85%</span>
-                  </div>
-                  <Progress value={85} className="h-2" />
-                </div>
-                <div>
-                  <div className="flex justify-between mb-2">
-                    <span>Professional Communication</span>
-                    <span className="text-sm text-muted-foreground">70%</span>
-                  </div>
-                  <Progress value={70} className="h-2" />
-                </div>
-                <div>
-                  <div className="flex justify-between mb-2">
-                    <span>Invoicing & Payments</span>
-                    <span className="text-sm text-muted-foreground">60%</span>
-                  </div>
-                  <Progress value={60} className="h-2" />
-                </div>
-                <div>
-                  <div className="flex justify-between mb-2">
-                    <span>Review Automation</span>
-                    <span className="text-sm text-muted-foreground">45%</span>
-                  </div>
-                  <Progress value={45} className="h-2" />
-                </div>
-                <div>
-                  <div className="flex justify-between mb-2">
-                    <span>Social Media Integration</span>
-                    <span className="text-sm text-muted-foreground">30%</span>
-                  </div>
-                  <Progress value={30} className="h-2" />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Quick Actions */}
+            {/* Quick Actions - Moved up */}
             <Card>
               <CardHeader>
                 <CardTitle>Quick Actions</CardTitle>
@@ -147,14 +223,15 @@ const Dashboard = () => {
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
                   {quickActions.map((action, index) => (
-                    <Button
-                      key={index}
-                      variant="outline"
-                      className="h-auto p-4 flex flex-col items-center gap-2"
-                    >
-                      <action.icon className="w-6 h-6" />
-                      <span className="text-sm">{action.label}</span>
-                    </Button>
+                    <Link key={index} to={action.href}>
+                      <Button
+                        variant="outline"
+                        className="w-full h-auto p-4 flex flex-col items-center gap-2"
+                      >
+                        <action.icon className="w-6 h-6" />
+                        <span className="text-sm">{action.label}</span>
+                      </Button>
+                    </Link>
                   ))}
                 </div>
               </CardContent>
@@ -193,27 +270,18 @@ const Dashboard = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-accent-foreground rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-sm">Follow up with kitchen extension lead</p>
-                    <p className="text-xs text-muted-foreground">Tomorrow</p>
+                {upcomingTasks.map((task, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <div className={`w-2 h-2 rounded-full ${
+                      index === 0 ? 'bg-accent-foreground' : 
+                      index === 1 ? 'bg-success' : 'bg-primary'
+                    }`}></div>
+                    <div className="flex-1">
+                      <p className="text-sm">{task.message}</p>
+                      <p className="text-xs text-muted-foreground">{task.dueDate}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-success rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-sm">Send invoice to completed project</p>
-                    <p className="text-xs text-muted-foreground">Friday</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-sm">Request review from satisfied customer</p>
-                    <p className="text-xs text-muted-foreground">Next week</p>
-                  </div>
-                </div>
+                ))}
               </CardContent>
             </Card>
           </div>

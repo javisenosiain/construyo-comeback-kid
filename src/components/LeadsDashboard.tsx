@@ -186,12 +186,11 @@ const LeadsDashboard = () => {
       </div>
 
       <Tabs defaultValue="current-leads" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="current-leads">Current Leads</TabsTrigger>
           <TabsTrigger value="planning-data">Planning Data</TabsTrigger>
           <TabsTrigger value="calendly">Calendly Meetings</TabsTrigger>
-          <TabsTrigger value="auto-responder">Auto Responder</TabsTrigger>
-          <TabsTrigger value="invoices">Invoices & Payments</TabsTrigger>
+          <TabsTrigger value="lead-engagement">Lead Engagement</TabsTrigger>
         </TabsList>
 
         <TabsContent value="current-leads" className="space-y-4">
@@ -394,12 +393,12 @@ const LeadsDashboard = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="auto-responder" className="space-y-4">
+        <TabsContent value="lead-engagement" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Auto Responder System</CardTitle>
+              <CardTitle>Lead Engagement</CardTitle>
               <CardDescription>
-                Automated email responses and templates
+                Engage with leads via WhatsApp, Email, SMS. Send offers and microsite links.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -407,8 +406,6 @@ const LeadsDashboard = () => {
             </CardContent>
           </Card>
         </TabsContent>
-
-        <TabsContent value="invoices" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
