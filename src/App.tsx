@@ -62,7 +62,7 @@ const AppContent = () => {
           </ProtectedRoute>
         } />
         <Route path="/crm" element={<ProtectedRoute><CRM /></ProtectedRoute>} />
-        <Route path="/auto-responder" element={<ProtectedRoute><AutoResponder /></ProtectedRoute>} />
+        <Route path="/lead-engagement" element={<ProtectedRoute><AutoResponder /></ProtectedRoute>} />
         <Route path="/calendly" element={<ProtectedRoute><Calendly /></ProtectedRoute>} />
         <Route path="/invoices" element={
           <ProtectedRoute>

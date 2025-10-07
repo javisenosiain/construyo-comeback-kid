@@ -31,8 +31,7 @@ const Navigation = () => {
         { href: "/leads", label: "Current Leads", icon: Users },
         { href: "/planning-data", label: "Planning Data", icon: Database },
         { href: "/calendly", label: "Calendly Meetings", icon: Calendar },
-        { href: "/auto-responder", label: "Auto Responder", icon: MessageSquare },
-        { href: "/invoices", label: "Invoices & Payments", icon: FileText },
+        { href: "/lead-engagement", label: "Lead Engagement", icon: MessageSquare },
       ]
     },
     {

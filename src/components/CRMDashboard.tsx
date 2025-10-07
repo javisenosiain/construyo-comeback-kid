@@ -31,6 +31,7 @@ import {
 import { format } from "date-fns";
 import { CRMSyncButton } from "./CRMSyncButton";
 import { ExternalCRMSettings } from "./ExternalCRMSettings";
+import AddCustomerDialog from "./AddCustomerDialog";
 
 // Type definitions based on actual database schema
 interface Lead {
@@ -502,20 +503,7 @@ export default function CRMDashboard() {
             Comprehensive customer relationship management with analytics
           </p>
         </div>
-        <Button
-          onClick={() => createLead("lead123", {
-            first_name: "John",
-            last_name: "Doe", 
-            email: "john@example.com",
-            phone: "+44 7123 456789",
-            project_type: "kitchen_extension",
-            priority: "high"
-          })}
-          disabled={loading}
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Create Sample Lead
-        </Button>
+        <AddCustomerDialog onCustomerAdded={loadCustomers} />
       </div>
 
       {/* Stats Overview */}

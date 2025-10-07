@@ -406,69 +406,6 @@ const LeadsDashboard = () => {
             </CardContent>
           </Card>
         </TabsContent>
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5" />
-                Invoices & Payments
-              </CardTitle>
-              <CardDescription>
-                Manage invoices and payment status for leads
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="rounded-md border overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-muted/50">
-                      <tr>
-                        <th className="text-left p-3 font-medium">Lead Name</th>
-                        <th className="text-left p-3 font-medium">Amount</th>
-                        <th className="text-left p-3 font-medium">Status</th>
-                        <th className="text-left p-3 font-medium">Date</th>
-                        <th className="text-left p-3 font-medium">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {invoices.map((invoice) => (
-                        <tr key={invoice.id} className="border-b hover:bg-muted/25">
-                          <td className="p-3 font-medium">{invoice.lead_name}</td>
-                          <td className="p-3">£{invoice.amount.toFixed(2)}</td>
-                          <td className="p-3">
-                            <Badge className={`text-xs ${
-                              invoice.status === 'paid' ? 'bg-green-100 text-green-800' : 
-                              invoice.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                              'bg-red-100 text-red-800'
-                            }`}>
-                              {invoice.status}
-                            </Badge>
-                          </td>
-                          <td className="p-3 text-sm">
-                            {new Date(invoice.created_at).toLocaleDateString()}
-                          </td>
-                          <td className="p-3">
-                            <div className="flex items-center gap-1">
-                              <Button variant="outline" size="sm">
-                                <FileText className="h-3 w-3 mr-1" />
-                                PDF
-                              </Button>
-                              {invoice.status === 'pending' && (
-                                <Button variant="outline" size="sm">
-                                  <DollarSign className="h-3 w-3 mr-1" />
-                                  Pay
-                                </Button>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
     </div>
   );

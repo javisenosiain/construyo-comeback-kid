@@ -2,7 +2,7 @@
  * React component for creating client microsites with real-time preview
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -16,6 +16,7 @@ import { AlertCircle, CheckCircle, ExternalLink, Copy, Eye, Code } from 'lucide-
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from '@/hooks/use-toast';
 import { MicrositeService, type MicrositeConfig, type MicrositeResult, createMicrositeForClient789 } from '@/lib/services/MicrositeService';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ClientData {
   id: string;
@@ -38,6 +39,36 @@ export const MicrositeCreator: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState<MicrositeResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isSuperUser, setIsSuperUser] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Check if user is super user
+  useEffect(() => {
+    checkSuperUser();
+  }, []);
+
+  const checkSuperUser = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      const { data: userRoles } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('is_active', true);
+
+      const hasSuperUserRole = userRoles?.some(role => role.role === 'super_user');
+      setIsSuperUser(hasSuperUserRole || false);
+    } catch (error) {
+      console.error('Error checking user role:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Sample client data (in real app, this would come from CRM)
   const sampleClients: ClientData[] = [
@@ -167,35 +198,46 @@ export const MicrositeCreator: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Client Selection */}
-            <div className="space-y-2">
-              <Label htmlFor="client-select">Select Client</Label>
-              <Select value={selectedClient} onValueChange={setSelectedClient}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose a client from CRM" />
-                </SelectTrigger>
-                <SelectContent>
-                  {sampleClients.map(client => (
-                    <SelectItem key={client.id} value={client.id}>
-                      {client.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {selectedClientData && (
-                <div className="p-3 bg-muted rounded-lg">
-                  <p className="font-medium">{selectedClientData.name}</p>
-                  <p className="text-sm text-muted-foreground">{selectedClientData.email}</p>
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {selectedClientData.services.map(service => (
-                      <Badge key={service} variant="secondary" className="text-xs">
-                        {service}
-                      </Badge>
+            {/* Client Selection - Only for Super Users */}
+            {isSuperUser && (
+              <div className="space-y-2">
+                <Label htmlFor="client-select">Select Client</Label>
+                <Select value={selectedClient} onValueChange={setSelectedClient}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose a client from CRM" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sampleClients.map(client => (
+                      <SelectItem key={client.id} value={client.id}>
+                        {client.name}
+                      </SelectItem>
                     ))}
+                  </SelectContent>
+                </Select>
+                {selectedClientData && (
+                  <div className="p-3 bg-muted rounded-lg">
+                    <p className="font-medium">{selectedClientData.name}</p>
+                    <p className="text-sm text-muted-foreground">{selectedClientData.email}</p>
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {selectedClientData.services.map(service => (
+                        <Badge key={service} variant="secondary" className="text-xs">
+                          {service}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
+
+            {!isSuperUser && !loading && (
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  Creating microsite for your company profile. Only platform super users can select other clients.
+                </AlertDescription>
+              </Alert>
+            )}
 
             {/* Template Selection */}
             <div className="space-y-2">
