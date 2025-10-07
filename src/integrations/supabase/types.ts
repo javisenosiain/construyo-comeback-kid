@@ -1992,8 +1992,6 @@ export type Database = {
           archived_at: string | null
           assigned_to: string | null
           city: string | null
-          company_id: string
-          company_name: string | null
           conversion_notes: string | null
           converted_at: string | null
           converted_to_customer_id: string | null
@@ -2025,8 +2023,6 @@ export type Database = {
           archived_at?: string | null
           assigned_to?: string | null
           city?: string | null
-          company_id: string
-          company_name?: string | null
           conversion_notes?: string | null
           converted_at?: string | null
           converted_to_customer_id?: string | null
@@ -2058,8 +2054,6 @@ export type Database = {
           archived_at?: string | null
           assigned_to?: string | null
           city?: string | null
-          company_id?: string
-          company_name?: string | null
           conversion_notes?: string | null
           converted_at?: string | null
           converted_to_customer_id?: string | null
@@ -2092,13 +2086,6 @@ export type Database = {
             columns: ["converted_to_customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "leads_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
