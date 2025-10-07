@@ -32,6 +32,7 @@ const Navigation = () => {
         { href: "/planning-data", label: "Planning Data", icon: Database },
         { href: "/calendly", label: "Calendly Meetings", icon: Calendar },
         { href: "/lead-engagement", label: "Lead Engagement", icon: MessageSquare },
+        { href: "/payments", label: "Invoices & Payments", icon: CreditCard },
       ]
     },
     {
