@@ -36,84 +36,73 @@ const AddLeadDialog = ({ onLeadAdded }: AddLeadDialogProps) => {
     status: 'new'
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!user) {
-      navigate('/auth');
-      return;
-    }
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  
+  if (!user) {
+    navigate('/auth');
+    return;
+  }
 
-    setIsLoading(true);
+  setIsLoading(true);
 
-    try {
-      // Get user's company
-      const { data: userRoles } = await supabase
-        .from('user_roles')
-        .select('company_id')
-        .eq('user_id', user.id)
-        .eq('is_active', true)
-        .single();
+  try {
+    const leadData = {
+      // No company_id needed
+      created_by: user.id,
+      first_name: formData.first_name,
+      last_name: formData.last_name,
+      email: formData.email,
+      phone: formData.phone,
+      project_type: formData.project_type,
+      project_description: formData.project_description,
+      address: formData.address,
+      lead_source: formData.lead_source,
+      priority: formData.priority,
+      status: formData.status as "new" | "contacted" | "qualified" | "proposal_sent" | "won" | "lost",
+      notes: `Budget range: ${formData.estimated_budget_range}`
+    };
 
-      if (!userRoles?.company_id) {
-        throw new Error('User company not found');
-      }
+    const { error: insertError } = await supabase
+      .from('leads')
+      .insert(leadData)
+      .single();  // Optional: Ensures exactly one row inserted
 
-      const leadData = {
-        company_id: userRoles.company_id,
-        created_by: user.id,
-        first_name: formData.first_name,
-        last_name: formData.last_name,
-        email: formData.email,
-        phone: formData.phone,
-        project_type: formData.project_type,
-        project_description: formData.project_description,
-        address: formData.address,
-        lead_source: formData.lead_source,
-        priority: formData.priority,
-        status: formData.status as "new" | "contacted" | "qualified" | "proposal_sent" | "won" | "lost",
-        notes: `Budget range: ${formData.estimated_budget_range}`
-      };
+    if (insertError) throw insertError;
 
-      const { error } = await supabase
-        .from('leads')
-        .insert(leadData);
+    toast({
+      title: "Lead added successfully",
+      description: `${formData.first_name} ${formData.last_name} has been added to your leads.`,
+    });
 
-      if (error) throw error;
+    setFormData({
+      first_name: '',
+      last_name: '',
+      email: '',
+      phone: '',
+      project_type: '',
+      project_description: '',
+      address: '',
+      estimated_budget_range: '',
+      lead_source: 'manual',
+      priority: 'medium',
+      status: 'new'
+    });
 
-      toast({
-        title: "Lead added successfully",
-        description: `${formData.first_name} ${formData.last_name} has been added to your leads.`,
-      });
-
-      setFormData({
-        first_name: '',
-        last_name: '',
-        email: '',
-        phone: '',
-        project_type: '',
-        project_description: '',
-        address: '',
-        estimated_budget_range: '',
-        lead_source: 'manual',
-        priority: 'medium',
-        status: 'new'
-      });
-
-      setOpen(false);
-      onLeadAdded();
-    } catch (error) {
-      console.error('Error adding lead:', error);
-      toast({
-        title: "Error",
-        description: "Failed to add lead. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+    setOpen(false);
+    onLeadAdded();
+  } catch (error) {
+    console.error('Error adding lead:', error);
+    toast({
+      title: "Error",
+      description: error.message || "Failed to add lead. Please try again.",
+      variant: "destructive",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+}
+   ;
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
