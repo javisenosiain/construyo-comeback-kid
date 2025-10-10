@@ -31,6 +31,3 @@ verify_jwt = false
 
 [functions.form-submission]
 verify_jwt = false
-
-[functions.whatsapp-referral-sender]
-verify_jwt = false
