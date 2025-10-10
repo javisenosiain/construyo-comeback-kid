@@ -36,7 +36,6 @@ import AddCustomerDialog from "./AddCustomerDialog";
 // Type definitions based on actual database schema
 interface Lead {
   id: string;
-  company_id: string;
   first_name: string;
   last_name: string;
   email: string;
@@ -289,8 +288,8 @@ export default function CRMDashboard() {
       if (!userRoles?.company_id) return;
 
       const [leadsRes, customersRes, projectsRes, invoicesRes] = await Promise.all([
-        supabase.from('leads').select('status').eq('company_id', userRoles.company_id),
-        supabase.from('customers').select('status').eq('company_id', userRoles.company_id),
+        supabase.from('leads').select('status'),
+        supabase.from('customers').select('status'),
         supabase.from('projects').select('status, budget'),
         supabase.from('invoices').select('status, amount')
       ]);

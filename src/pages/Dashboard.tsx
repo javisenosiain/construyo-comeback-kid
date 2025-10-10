@@ -48,7 +48,6 @@ const Dashboard = () => {
       const { data: leadsData } = await supabase
         .from('leads')
         .select('status')
-        .eq('company_id', userRoles.company_id)
         .in('status', ['new', 'contacted', 'qualified']);
 
       // Fetch pending payments
