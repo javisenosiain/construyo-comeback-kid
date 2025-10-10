@@ -1992,6 +1992,7 @@ export type Database = {
           archived_at: string | null
           assigned_to: string | null
           city: string | null
+          company_id: string
           conversion_notes: string | null
           converted_at: string | null
           converted_to_customer_id: string | null
@@ -2023,6 +2024,7 @@ export type Database = {
           archived_at?: string | null
           assigned_to?: string | null
           city?: string | null
+          company_id: string
           conversion_notes?: string | null
           converted_at?: string | null
           converted_to_customer_id?: string | null
@@ -2054,6 +2056,7 @@ export type Database = {
           archived_at?: string | null
           assigned_to?: string | null
           city?: string | null
+          company_id?: string
           conversion_notes?: string | null
           converted_at?: string | null
           converted_to_customer_id?: string | null
@@ -2086,6 +2089,13 @@ export type Database = {
             columns: ["converted_to_customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
@@ -3631,6 +3641,10 @@ export type Database = {
       }
     }
     Functions: {
+      armor: {
+        Args: { "": string }
+        Returns: string
+      }
       check_auth_rate_limit: {
         Args: { p_email?: string; p_ip_address: unknown }
         Returns: boolean
@@ -3652,8 +3666,24 @@ export type Database = {
         Args: { p_conversion_notes?: string; p_lead_id: string }
         Returns: string
       }
+      dearmor: {
+        Args: { "": string }
+        Returns: string
+      }
       encrypt_sensitive_data: {
         Args: { data: string }
+        Returns: string
+      }
+      gen_random_bytes: {
+        Args: { "": number }
+        Returns: string
+      }
+      gen_random_uuid: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      gen_salt: {
+        Args: { "": string }
         Returns: string
       }
       generate_feedback_token: {
@@ -3817,6 +3847,14 @@ export type Database = {
           p_table_name: string
         }
         Returns: undefined
+      }
+      pgp_armor_headers: {
+        Args: { "": string }
+        Returns: Record<string, unknown>[]
+      }
+      pgp_key_id: {
+        Args: { "": string }
+        Returns: string
       }
       upsert_crm_settings: {
         Args: {
