@@ -55,6 +55,37 @@ serve(async (req) => {
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
   const supabase = createClient(supabaseUrl, supabaseKey);
 
+  // SECURITY: Verify authentication
+  const authHeader = req.headers.get('authorization');
+  if (!authHeader) {
+    console.error('WhatsApp referral: Missing authorization header');
+    return new Response(JSON.stringify({ 
+      success: false,
+      error: 'Unauthorized - Authentication required' 
+    }), {
+      status: 401,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+
+  // Validate JWT token and get authenticated user
+  const { data: { user }, error: authError } = await supabase.auth.getUser(
+    authHeader.replace('Bearer ', '')
+  );
+
+  if (authError || !user) {
+    console.error('WhatsApp referral: Invalid authentication', authError);
+    return new Response(JSON.stringify({ 
+      success: false,
+      error: 'Unauthorized - Invalid authentication token' 
+    }), {
+      status: 401,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+
+  console.log('WhatsApp referral: User authenticated', { userId: user.id });
+
   // Get respond.io API credentials
   const respondIoApiKey = Deno.env.get('RESPOND_IO_API_KEY');
   const respondIoBaseUrl = Deno.env.get('RESPOND_IO_BASE_URL') || 'https://api.respond.io';
