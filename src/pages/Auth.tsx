@@ -22,6 +22,7 @@ const Auth = () => {
 
   const [signUpForm, setSignUpForm] = useState({
     fullName: '',
+    companyName: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -54,13 +55,15 @@ const Auth = () => {
       const { error } = await signUp(
         signUpForm.email, 
         signUpForm.password, 
-        signUpForm.fullName
+        signUpForm.fullName,
+        signUpForm.companyName
       );
       
       if (!error) {
         // User will receive email confirmation
         setSignUpForm({
           fullName: '',
+          companyName: '',
           email: '',
           password: '',
           confirmPassword: ''
@@ -206,6 +209,17 @@ const Auth = () => {
                       placeholder="Enter your full name"
                       value={signUpForm.fullName}
                       onChange={(e) => setSignUpForm(prev => ({ ...prev, fullName: e.target.value }))}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="signup-company">Company Name</Label>
+                    <Input
+                      id="signup-company"
+                      type="text"
+                      placeholder="Enter your company name"
+                      value={signUpForm.companyName}
+                      onChange={(e) => setSignUpForm(prev => ({ ...prev, companyName: e.target.value }))}
                       required
                     />
                   </div>
