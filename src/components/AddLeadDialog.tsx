@@ -47,8 +47,22 @@ const AddLeadDialog = ({ onLeadAdded }: AddLeadDialogProps) => {
   setIsLoading(true);
 
   try {
+    // Get user's company from user_roles
+    const { data: userRole, error: roleError } = await supabase
+      .from('user_roles')
+      .select('company_id')
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+      .order('assigned_at', { ascending: true })
+      .limit(1)
+      .single();
+
+    if (roleError || !userRole?.company_id) {
+      throw new Error('No active company found for user. Please contact support.');
+    }
+
     const leadData = {
-      // No company_id needed
+      company_id: userRole.company_id,
       created_by: user.id,
       first_name: formData.first_name,
       last_name: formData.last_name,
@@ -66,7 +80,7 @@ const AddLeadDialog = ({ onLeadAdded }: AddLeadDialogProps) => {
     const { error: insertError } = await supabase
       .from('leads')
       .insert(leadData)
-      .single();  // Optional: Ensures exactly one row inserted
+      .single();
 
     if (insertError) throw insertError;
 
