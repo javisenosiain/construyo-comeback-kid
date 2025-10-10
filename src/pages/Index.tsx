@@ -109,7 +109,7 @@ const Index = () => {
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Join the Construyo Beta – <span className="text-primary">Revolutionize</span> Your Construction Business
+              <span className="text-primary">Revolutionize</span> Your Construction Business
             </h1>
             <p className="text-lg md:text-xl text-white/90 mb-8 max-w-4xl mx-auto">
               The all-in-one platform for construction pros: Capture leads, manage CRM & projects, automate payments/reminders, showcase portfolios with AI-powered creation, market via reviews/social posts, host microsites for conversions—and focus on building, not tech.
@@ -137,7 +137,7 @@ const Index = () => {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
-              <Link to="/beta">Join the Beta Waitlist</Link>
+              <Link to="/auth">Login to Dashboard</Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
               <a href="#features">See All Features</a>
@@ -179,18 +179,15 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Beta Benefits Section */}
+      {/* Why Choose Construyo Section */}
       <section id="about" className="py-24 px-6 bg-secondary">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold mb-4">
-              Why Join the Construyo Beta Early?
+              Why Choose Construyo?
             </h2>
-            <p className="text-xl text-primary font-semibold mb-2">
-              Limited to first 500—only 200 spots left!
-            </p>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Be among the first to experience the future of construction business management
+              Built specifically for construction professionals who want to focus on building, not managing technology
             </p>
           </div>
 
@@ -214,7 +211,7 @@ const Index = () => {
 
           <div className="text-center mt-12">
             <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
-              <Link to="/beta">Join Beta Waitlist</Link>
+              <Link to="/auth">Get Started</Link>
             </Button>
           </div>
         </div>
@@ -227,10 +224,10 @@ const Index = () => {
             Ready to Transform Your Construction Business?
           </h2>
           <p className="text-xl text-muted-foreground mb-8">
-            Join the beta and be part of the future of construction management
+            Start streamlining your construction business management today
           </p>
           <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
-            <Link to="/beta">Join the Beta Waitlist</Link>
+            <Link to="/auth">Login to Get Started</Link>
           </Button>
         </div>
       </section>
