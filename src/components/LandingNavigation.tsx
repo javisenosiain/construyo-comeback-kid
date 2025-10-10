@@ -48,17 +48,10 @@ const LandingNavigation = () => {
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
             <Button
-              variant="outline"
               asChild
-              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+              className="bg-primary hover:bg-primary/90"
             >
               <Link to="/auth">Login</Link>
-            </Button>
-            <Button 
-              asChild
-              className="bg-success hover:bg-success/90 text-success-foreground"
-            >
-              <Link to="/beta">Join Beta</Link>
             </Button>
           </div>
 
@@ -98,17 +91,10 @@ const LandingNavigation = () => {
                   
                   <div className="border-t border-border pt-4 mt-4">
                     <Button
-                      variant="outline"
                       asChild
-                      className="w-full mb-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                      className="w-full bg-primary hover:bg-primary/90"
                     >
                       <Link to="/auth" onClick={() => setIsOpen(false)}>Login</Link>
-                    </Button>
-                    <Button
-                      asChild
-                      className="w-full bg-success hover:bg-success/90 text-success-foreground"
-                    >
-                      <Link to="/beta" onClick={() => setIsOpen(false)}>Join Beta</Link>
                     </Button>
                   </div>
                 </div>
